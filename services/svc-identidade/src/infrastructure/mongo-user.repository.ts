@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { HydratedDocument, Model } from 'mongoose';
 import { User } from '../domain/user.entity';
 import { UserRepository } from '../domain/user.repository';
 
@@ -18,12 +18,17 @@ export class MongoUserRepository extends UserRepository {
   }
 
   async create(data: Omit<User, 'id'>): Promise<User> {
-    const doc = await this.users.create(data);
-    return { id: doc.id, name: doc.name, email: doc.email };
+    return toDomain(await this.users.create(data));
   }
 
   async findAll(): Promise<User[]> {
-    const docs = await this.users.find();
-    return docs.map((d) => ({ id: d.id, name: d.name, email: d.email }));
+    return (await this.users.find()).map(toDomain);
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    const doc = await this.users.findOne({ email });
+    return doc && toDomain(doc);
   }
 }
+
+const toDomain = (doc: HydratedDocument<UserDocument>): User => ({ id: doc.id, name: doc.name, email: doc.email });

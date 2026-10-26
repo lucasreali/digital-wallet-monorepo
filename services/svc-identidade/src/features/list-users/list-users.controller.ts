@@ -1,14 +1,14 @@
 import { Controller, Get } from '@nestjs/common';
 import { User } from '../../domain/user.entity';
-import { UserRepository } from '../../domain/user.repository';
+import { ListUsers } from './list-users.use-case';
 
 @Controller('users')
 export class ListUsersController {
-  constructor(private readonly users: UserRepository) {}
+  constructor(private readonly listUsers: ListUsers) {}
 
-  /** Lista os usuários */
+  /** Lists every user */
   @Get()
   list(): Promise<User[]> {
-    return this.users.findAll();
+    return this.listUsers.execute();
   }
 }

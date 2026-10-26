@@ -1,15 +1,15 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { User } from '../../domain/user.entity';
-import { UserRepository } from '../../domain/user.repository';
 import { CreateUserDto } from './create-user.dto';
+import { CreateUser } from './create-user.use-case';
 
 @Controller('users')
 export class CreateUserController {
-  constructor(private readonly users: UserRepository) {}
+  constructor(private readonly createUser: CreateUser) {}
 
-  /** Cadastra um usuário */
+  /** Registers a user; 409 if the email is already in use */
   @Post()
   create(@Body() dto: CreateUserDto): Promise<User> {
-    return this.users.create(dto);
+    return this.createUser.execute(dto);
   }
 }
