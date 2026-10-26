@@ -1,7 +1,8 @@
 import { Wallet } from './wallet.entity';
 
-// Porta do domínio: as fatias dependem dela, a infraestrutura implementa
+// Domain port: use cases depend on it, infrastructure implements it
 export abstract class WalletRepository {
   abstract open(ownerId: string): Promise<Wallet>;
   abstract findAll(): Promise<Wallet[]>;
+  abstract findByOwner(ownerId: string): Promise<Wallet | null>;
 }

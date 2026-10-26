@@ -26,6 +26,11 @@ export class SqlWalletRepository extends WalletRepository {
   async findAll(): Promise<Wallet[]> {
     return (await this.wallets.find()).map(toDomain);
   }
+
+  async findByOwner(ownerId: string): Promise<Wallet | null> {
+    const row = await this.wallets.findOneBy({ ownerId });
+    return row && toDomain(row);
+  }
 }
 
 const toDomain = (row: WalletRow): Wallet => ({ id: row.id, ownerId: row.ownerId, balance: Number(row.balance) });
