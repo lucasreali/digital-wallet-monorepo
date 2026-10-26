@@ -1,0 +1,45 @@
+services:
+  svc-carteira:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.nest
+      args: { APP: svc-carteira }
+    environment:
+      DB_HOST: ${DB_HOST:-sql-carteira}
+      DB_USER: ${DB_USER:-sa}
+      DB_PASSWORD: ${DB_PASSWORD:-Carteira@Local123}
+      DB_NAME: ${DB_NAME:-carteira}
+      DB_TRUST_CERT: ${DB_TRUST_CERT:-true}
+    ports:
+      - "3002:3000"
+    depends_on:
+      sql-carteira-init:
+        condition: service_completed_successfully
+
+  # Mesmo motor do Azure SQL; em produção aponte DB_HOST para o servidor do Azure
+  sql-carteira:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: Carteira@Local123
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql-carteira:/var/opt/mssql
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -P Carteira@Local123 -Q "SELECT 1" -b
+      interval: 5s
+      retries: 20
+
+  # A imagem do SQL Server não cria banco por variável de ambiente
+  sql-carteira-init:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
+    depends_on:
+      sql-carteira:
+        condition: service_healthy
+    entrypoint: /opt/mssql-tools18/bin/sqlcmd -C -S sql-carteira -U sa -P Carteira@Local123 -Q "IF DB_ID('carteira') IS NULL CREATE DATABASE carteira"
+
+volumes:
+  sql-carteira:
