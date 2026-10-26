@@ -3,3 +3,4 @@ dist
 .env
 local.settings.json
 .output
+.DS_Store
