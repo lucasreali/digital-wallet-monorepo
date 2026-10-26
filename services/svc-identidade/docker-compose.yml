@@ -1,0 +1,22 @@
+services:
+  svc-identidade:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.nest
+      args: { APP: svc-identidade }
+    environment:
+      MONGO_URL: ${MONGO_URL:-mongodb://mongo-identidade:27017/identidade}
+    ports:
+      - "3001:3000"
+    depends_on:
+      - mongo-identidade
+
+  mongo-identidade:
+    image: mongo:8
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-identidade:/data/db
+
+volumes:
+  mongo-identidade:
