@@ -17,7 +17,7 @@ Required pieces and what exists today:
 | Azure Function | HTTP trigger, calculation/enrichment | `fn-notificacoes` (`/api/insights`) | Exists |
 | Events | Event-driven flow, shown in the video, with event docs ("Swagger — Eventos") | none | Missing. Plan: a service publishes an event (e.g. wallet created), a Function message trigger consumes it, documented with AsyncAPI/EventCatalog |
 | API Gateway | AWS API Gateway in front of the BFF | none | Missing |
-| Tests | Unit tests + architecture tests | none | Missing |
+| Tests | Unit tests + architecture tests | Vitest in every backend package; use-case specs + `src/architecture.spec.ts` in both services | Covers existing slices; every new slice adds its own (see TDD) |
 | Docker Hub | Image for every service + BFF | Dockerfiles exist | Not pushed |
 
 Grading points from the slides:
@@ -57,16 +57,43 @@ DBs in Docker, apps on the host:
 ## Architecture
 
 - The web app talks only to the BFF, via the generated TanStack Query hooks (`#/gen/hooks`). The BFF calls services with plain `fetch`.
-- Each Nest service:
-  - `src/domain/`: entities and repository ports as abstract classes, with no Nest or DB imports
-  - `src/infrastructure/`: TypeORM/Mongoose adapters
-  - `src/features/<use-case>/`: controller + DTO
-  - Ports are bound in `app.module.ts` (`{ provide: Port, useClass: Adapter }`).
-- New features add an Application layer: a use-case class between controller and repository port. The existing features call repositories straight from controllers, which is legacy; don't copy that pattern.
+- Each Nest service (`svc-identidade`, `svc-carteira`) follows the same layout; `create-user` / `create-wallet` are the reference slices:
+
+  ```
+  src/
+    domain/                     # Domain: entities, repository ports (abstract classes), errors.ts. Imports nothing outside domain/
+    features/<use-case>/        # one vertical slice per use case (create-user, get-user, update-user, ...)
+      <use-case>.use-case.ts    # Application: plain class, `execute(input)`, depends only on domain ports. No Nest/DB imports
+      <use-case>.use-case.spec.ts
+      <use-case>.controller.ts  # API: HTTP only, injects the use case (never a repository)
+      <use-case>.dto.ts         # API: request DTO with class-validator, separate from the entity
+    infrastructure/             # Infrastructure: TypeORM/Mongoose adapters implementing the ports
+    api/domain-error.filter.ts  # maps DomainError -> HTTP (NotFoundError 404, ConflictError 409, other DomainError 422)
+    testing/                    # in-memory repository fakes for unit tests
+    architecture.spec.ts        # layer rules (ArchUnit-style)
+  ```
+
+- Wiring in `app.module.ts`: ports with `{ provide: Port, useClass: Adapter }`; use cases with a factory (`{ provide: UseCase, useFactory: (repo: Port) => new UseCase(repo), inject: [Port] }`) so they carry no `@Injectable()`.
+- Business rules throw domain errors from `domain/errors.ts` (subclass them for specific cases); never throw `HttpException` outside controllers.
+- A slice never imports another slice. Code shared by two slices goes in `domain/`.
+- The use-case input is a plain type (`CreateUserInput`), not the DTO; the DTO only has to be structurally compatible.
 - `docs/entrega.md` is the assignment brief. Check it for the required endpoints and deliverables.
+
+## TDD workflow (mandatory)
+
+Development here is test-driven. For every new use case, business rule or bug fix:
+
+1. **Red**: write the spec first (`<use-case>.use-case.spec.ts`) against the in-memory fake from `src/testing/`. If the use case needs a new port method, add it to the port and the fake. Run `pnpm --filter <name> test` and see it fail for the expected reason.
+2. **Green**: write the smallest use case that passes. Then the controller + DTO, the adapter method and the factory in `app.module.ts`.
+3. **Refactor** with the tests green. Finish with `pnpm --filter <name> test` and `pnpm --filter <name> build`.
+
+- Unit tests target use cases and domain logic; they never touch a real DB or Nest DI. Instantiate with `new UseCase(new InMemoryXRepository())`.
+- Cover the happy path and every domain error the use case can throw (assert the error class, e.g. `rejects.toThrow(NotFoundError)`).
+- `architecture.spec.ts` must stay green. If it fails, fix the dependency, not the rule. When adding a new layer or folder, add its rule there.
+- Bug fixes start with a failing test that reproduces the bug.
 
 ## Conventions
 
 - Write code, comments, docs and commit messages in English. Some existing comments are in Portuguese.
 - No linter or formatter. Match the surrounding style: Nest code uses semicolons; web code uses no semicolons. Both use single quotes.
-- No tests exist yet, and root `pnpm test` is a no-op. Unit and architecture tests are required deliverables (see Goal).
+- Tests use Vitest. Root `pnpm test` runs every package; `pnpm --filter <name> test:watch` for the TDD loop. Specs live next to the code as `*.spec.ts` and are excluded from the build (`tsconfig.build.json` in the Nest services, `exclude` in `fn-notificacoes`).
