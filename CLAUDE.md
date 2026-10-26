@@ -95,5 +95,5 @@ Development here is test-driven. For every new use case, business rule or bug fi
 ## Conventions
 
 - Write code, comments, docs and commit messages in English. Some existing comments are in Portuguese.
-- No linter or formatter. Match the surrounding style: Nest code uses semicolons; web code uses no semicolons. Both use single quotes.
+- Biome formats and lints the whole repo (`biome.json` at the root): single quotes, 2 spaces, 120 columns, semicolons in Nest code and none in `apps/web`. Run `pnpm check` (format + lint + sorted imports, with fixes) before every commit; `pnpm lint` and `pnpm format` run each part alone. Generated code, Markdown and YAML are ignored.
 - Tests use Vitest. Root `pnpm test` runs every package; `pnpm --filter <name> test:watch` for the TDD loop. Specs live next to the code as `*.spec.ts` and are excluded from the build (`tsconfig.build.json` in the Nest services, `exclude` in `fn-notificacoes`).
