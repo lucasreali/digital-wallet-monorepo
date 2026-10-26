@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserRepository } from './domain/user.repository';
 import { CreateUserController } from './features/create-user/create-user.controller';
-import { ListUsersController } from './features/list-users/list-users.controller';
 import { CreateUser } from './features/create-user/create-user.use-case';
+import { ListUsersController } from './features/list-users/list-users.controller';
 import { ListUsers } from './features/list-users/list-users.use-case';
 import { MongoUserRepository, UserDocument, UserSchema } from './infrastructure/mongo-user.repository';
 

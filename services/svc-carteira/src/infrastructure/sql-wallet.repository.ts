@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Column, Entity, PrimaryGeneratedColumn, Repository, VersionColumn } from 'typeorm';
-import { Wallet } from '../domain/wallet.entity';
+import { Column, Entity, PrimaryGeneratedColumn, type Repository, VersionColumn } from 'typeorm';
+import type { Wallet } from '../domain/wallet.entity';
 import { WalletRepository } from '../domain/wallet.repository';
 
 @Entity('wallets')

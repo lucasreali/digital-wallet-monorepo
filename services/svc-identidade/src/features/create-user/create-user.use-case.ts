@@ -1,6 +1,6 @@
 import { ConflictError } from '../../domain/errors';
-import { User } from '../../domain/user.entity';
-import { UserRepository } from '../../domain/user.repository';
+import type { User } from '../../domain/user.entity';
+import type { UserRepository } from '../../domain/user.repository';
 
 export type CreateUserInput = Omit<User, 'id'>;
 

@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { Wallet } from '../domain/wallet.entity';
+import type { Wallet } from '../domain/wallet.entity';
 import { WalletRepository } from '../domain/wallet.repository';
 
 // Test double for use-case specs; keeps unit tests free of SQL Server

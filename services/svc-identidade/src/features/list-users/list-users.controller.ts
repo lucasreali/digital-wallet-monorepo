@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
-import { User } from '../../domain/user.entity';
-import { ListUsers } from './list-users.use-case';
+import type { User } from '../../domain/user.entity';
+import type { ListUsers } from './list-users.use-case';
 
 @Controller('users')
 export class ListUsersController {

@@ -1,4 +1,4 @@
-import { User } from './user.entity';
+import type { User } from './user.entity';
 
 // Domain port: use cases depend on it, infrastructure implements it
 export abstract class UserRepository {

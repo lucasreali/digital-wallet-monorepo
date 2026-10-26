@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Model } from 'mongoose';
-import { User } from '../domain/user.entity';
+import type { HydratedDocument, Model } from 'mongoose';
+import type { User } from '../domain/user.entity';
 import { UserRepository } from '../domain/user.repository';
 
 @Schema({ collection: 'users' })

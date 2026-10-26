@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WalletRepository } from './domain/wallet.repository';
 import { CreateWalletController } from './features/create-wallet/create-wallet.controller';
-import { ListWalletsController } from './features/list-wallets/list-wallets.controller';
 import { CreateWallet } from './features/create-wallet/create-wallet.use-case';
+import { ListWalletsController } from './features/list-wallets/list-wallets.controller';
 import { ListWallets } from './features/list-wallets/list-wallets.use-case';
 import { SqlWalletRepository, WalletRow } from './infrastructure/sql-wallet.repository';
 
@@ -27,8 +27,16 @@ import { SqlWalletRepository, WalletRow } from './infrastructure/sql-wallet.repo
   providers: [
     { provide: WalletRepository, useClass: SqlWalletRepository },
     // Use cases stay framework-free, so Nest builds them through factories
-    { provide: CreateWallet, useFactory: (wallets: WalletRepository) => new CreateWallet(wallets), inject: [WalletRepository] },
-    { provide: ListWallets, useFactory: (wallets: WalletRepository) => new ListWallets(wallets), inject: [WalletRepository] },
+    {
+      provide: CreateWallet,
+      useFactory: (wallets: WalletRepository) => new CreateWallet(wallets),
+      inject: [WalletRepository],
+    },
+    {
+      provide: ListWallets,
+      useFactory: (wallets: WalletRepository) => new ListWallets(wallets),
+      inject: [WalletRepository],
+    },
   ],
 })
 export class AppModule {}

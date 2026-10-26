@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { User } from '../domain/user.entity';
+import type { User } from '../domain/user.entity';
 import { UserRepository } from '../domain/user.repository';
 
 // Test double for use-case specs; keeps unit tests free of MongoDB

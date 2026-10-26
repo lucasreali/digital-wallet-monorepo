@@ -1,7 +1,7 @@
 import { writeFileSync } from 'node:fs';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
+import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
@@ -18,7 +18,7 @@ async function bootstrap() {
 
   // `pnpm openapi` grava o contrato que o Kubb do apps/web usa para gerar o client
   if (process.argv.includes('--emit-openapi')) {
-    writeFileSync('openapi.json', JSON.stringify(document, null, 2) + '\n');
+    writeFileSync('openapi.json', `${JSON.stringify(document, null, 2)}\n`);
     return app.close();
   }
 

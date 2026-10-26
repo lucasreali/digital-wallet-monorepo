@@ -1,4 +1,4 @@
-import { Wallet } from './wallet.entity';
+import type { Wallet } from './wallet.entity';
 
 // Domain port: use cases depend on it, infrastructure implements it
 export abstract class WalletRepository {

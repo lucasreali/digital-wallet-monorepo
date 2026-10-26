@@ -1,6 +1,6 @@
 import { ConflictError } from '../../domain/errors';
-import { Wallet } from '../../domain/wallet.entity';
-import { WalletRepository } from '../../domain/wallet.repository';
+import type { Wallet } from '../../domain/wallet.entity';
+import type { WalletRepository } from '../../domain/wallet.repository';
 
 export type CreateWalletInput = { ownerId: string };
 
