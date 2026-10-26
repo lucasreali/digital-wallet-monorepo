@@ -4,3 +4,4 @@ dist
 local.settings.json
 .output
 .DS_Store
+prompt.md
