@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This repo is the PUCPR "Arquitetura de Soluções com Cloud" PJBL final delivery (Entrega 3), a digital wallet. `docs/entrega.md` is the brief and its checklist is the definition of done. `docs/aulas/*.md` are the course slides, so they set how the work is graded. Every change should move an item on that checklist forward.
 
+**No proactivity.** Do only what the user asked or what `docs/entrega.md` requires. Do not add pages, screens, features, endpoints, files or "nice to have" extras on your own initiative, even if they seem helpful for the video or the grade. If you think something extra is worth it, suggest it in one line and wait for a yes. Use file names exactly as the user gives them.
+
 Required pieces and what exists today:
 
 | Piece | Brief requires | Here | Status |
