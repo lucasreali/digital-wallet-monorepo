@@ -1,0 +1,15 @@
+# Imagem única para os apps NestJS: docker build -f Dockerfile.nest --build-arg APP=bff .
+FROM node:24-alpine AS build
+ARG APP
+RUN npm i -g pnpm@12.14.0
+WORKDIR /repo
+COPY . .
+RUN pnpm install --frozen-lockfile --filter "${APP}..."
+RUN pnpm --filter "${APP}" build && pnpm --filter "${APP}" deploy --prod /out
+
+FROM node:24-alpine
+WORKDIR /app
+ENV NODE_ENV=production PORT=3000
+COPY --from=build /out .
+EXPOSE 3000
+CMD ["node", "dist/main.js"]

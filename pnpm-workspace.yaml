@@ -1,0 +1,18 @@
+packages:
+  - apps/*
+  - services/*
+
+# pnpm deploy (usado nos Dockerfiles) exige isso
+injectWorkspacePackages: true
+
+allowBuilds:
+  '@scarf/scarf': false # telemetria do swagger-ui, não precisa rodar
+  es5-ext: false # só imprime mensagem no postinstall
+  esbuild: true
+  lightningcss: true
+
+minimumReleaseAgeExclude:
+  - '@tanstack/query-core@5.105.0'
+  - '@tanstack/query-devtools@5.105.0'
+  - '@tanstack/react-query-devtools@5.105.0'
+  - '@tanstack/react-query@5.105.0'
