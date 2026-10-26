@@ -59,6 +59,7 @@ DBs in Docker, apps on the host:
 ## Architecture
 
 - The web app talks only to the BFF, via the generated TanStack Query hooks (`#/gen/hooks`). The BFF calls services with plain `fetch`.
+- UI: `docs/prototype.html` is the design prototype (open it in a browser). Build every web interface from it: same screens, layout, components and styling.
 - Each Nest service (`svc-identidade`, `svc-carteira`) follows the same layout; `create-user` / `create-wallet` are the reference slices:
 
   ```
