@@ -2,6 +2,33 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Goal
+
+This repo is the PUCPR "Arquitetura de Soluções com Cloud" PJBL final delivery (Entrega 3), a digital wallet. `docs/entrega.md` is the brief and its checklist is the definition of done. `docs/aulas/*.md` are the course slides, so they set how the work is graded. Every change should move an item on that checklist forward.
+
+Required pieces and what exists today:
+
+| Piece | Brief requires | Here | Status |
+|---|---|---|---|
+| Frontend | React SPA, talks **only** to the BFF | `apps/web` | Done; still needs a cloud deploy (the slides use Azure Static Web Apps) |
+| BFF | Node/Nest, CRUD proxy + `GET /aggregated-data` (Mongo + SQL + Function in one response) | `apps/bff` | Only `aggregated-data` exists; CRUD proxy routes are missing |
+| Microservice 1 | MongoDB Atlas, full CRUD + Swagger | `svc-identidade` (users) | Create + list only |
+| Microservice 2 | Azure SQL, full CRUD + Swagger | `svc-carteira` (wallets) | Create + list only |
+| Azure Function | HTTP trigger, calculation/enrichment | `fn-notificacoes` (`/api/insights`) | Exists |
+| Events | Event-driven flow, shown in the video, with event docs ("Swagger — Eventos") | none | Missing. Plan: a service publishes an event (e.g. wallet created), a Function message trigger consumes it, documented with AsyncAPI/EventCatalog |
+| API Gateway | AWS API Gateway in front of the BFF | none | Missing |
+| Tests | Unit tests + architecture tests | none | Missing |
+| Docker Hub | Image for every service + BFF | Dockerfiles exist | Not pushed |
+
+Grading points from the slides:
+
+- Clean Architecture: Domain → Application (use cases) → Infrastructure → API (controllers). Dependencies point inward, and controllers depend on use cases, never on repositories. Keep it pragmatic: the slides warn against interface overload on simple CRUD.
+- Vertical Slice: one folder per use case (`CreateWallet`, `GetWallet`, ...). Keep each slice small and the shared code minimal.
+- Architecture tests (the slides show ArchUnit): assert the layer rules, e.g. `domain/` imports nothing from Nest, TypeORM, Mongoose or `infrastructure/`.
+- SOLID and Clean Code: constructor injection, DTOs separate from entities, explicit domain errors mapped to HTTP.
+- Documentation goes in the PDF and lives outside the code: arc42 (`docs/Carteira-Digital-Arquitetura-arc42-1.pdf`), C4 (context, containers, components; Mermaid is fine), Software Architecture Canvas, and screenshots.
+- Each repo/project README needs the architecture, the tech stack, how to run it locally and the student names. The video must use public cloud URLs, never `localhost`.
+
 ## Workspace
 
 pnpm workspace (`apps/*`, `services/*`). Filter names: `web`, `bff`, `svc-identidade`, `svc-carteira`, `fn-notificacoes`.
@@ -42,4 +69,4 @@ DBs in Docker, apps on the host:
 
 - Write code, comments, docs and commit messages in English. Some existing comments are in Portuguese.
 - No linter or formatter. Match the surrounding style: Nest code uses semicolons; web code uses no semicolons. Both use single quotes.
-- No tests exist yet, and root `pnpm test` is a no-op.
+- No tests exist yet, and root `pnpm test` is a no-op. Unit and architecture tests are required deliverables (see Goal).
