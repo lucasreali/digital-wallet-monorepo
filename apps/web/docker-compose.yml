@@ -1,0 +1,9 @@
+services:
+  web:
+    build:
+      context: ../..
+      dockerfile: apps/web/Dockerfile
+      args:
+        VITE_BFF_URL: ${VITE_BFF_URL:-http://localhost:3000}
+    ports:
+      - "5173:3000"

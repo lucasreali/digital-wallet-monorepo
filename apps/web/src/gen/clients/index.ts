@@ -1,0 +1,1 @@
+export { getAggregatedData } from './getAggregatedData'
