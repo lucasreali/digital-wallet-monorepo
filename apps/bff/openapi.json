@@ -1,0 +1,67 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/aggregated-data": {
+      "get": {
+        "operationId": "getAggregatedData",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AggregatedDataDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Junta os dois microsserviços e a Function em uma única resposta",
+        "tags": [
+          "AggregatedData"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "bff",
+    "description": "",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "AggregatedDataDto": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "description": "Vem do svc-identidade (MongoDB)",
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "wallets": {
+            "description": "Vem do svc-carteira (Azure SQL)",
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "insights": {
+            "type": "object",
+            "description": "Vem da fn-notificacoes (Azure Function)"
+          }
+        },
+        "required": [
+          "users",
+          "wallets",
+          "insights"
+        ]
+      }
+    }
+  }
+}

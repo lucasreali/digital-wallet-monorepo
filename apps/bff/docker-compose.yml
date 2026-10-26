@@ -1,0 +1,12 @@
+services:
+  bff:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.nest
+      args: { APP: bff }
+    environment:
+      SVC_IDENTIDADE_URL: ${SVC_IDENTIDADE_URL:-http://svc-identidade:3000}
+      SVC_CARTEIRA_URL: ${SVC_CARTEIRA_URL:-http://svc-carteira:3000}
+      FN_NOTIFICACOES_URL: ${FN_NOTIFICACOES_URL:-http://fn-notificacoes:80}
+    ports:
+      - "3000:3000"
