@@ -8,9 +8,7 @@
     "build": "nest build",
     "dev": "nest start --watch",
     "start": "node dist/main.js",
-    "openapi": "nest build && node dist/main.js --emit-openapi",
-    "test": "vitest run --passWithNoTests",
-    "test:watch": "vitest"
+    "openapi": "nest build && node dist/main.js --emit-openapi"
   },
   "dependencies": {
     "@fastify/cors": "^11.3.1",
@@ -27,7 +25,6 @@
   "devDependencies": {
     "@nestjs/cli": "^12.0.10",
     "@types/node": "^26.6.5",
-    "typescript": "^6.0.3",
-    "vitest": "^5.0.5"
+    "typescript": "^6.0.3"
   }
 }

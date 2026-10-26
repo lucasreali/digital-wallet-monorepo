@@ -9,16 +9,13 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
-    "start": "func start",
-    "test": "vitest run --passWithNoTests",
-    "test:watch": "vitest"
+    "start": "func start"
   },
   "dependencies": {
     "@azure/functions": "^4.17.0"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
-    "typescript": "^6.0.3",
-    "vitest": "^5.0.5"
+    "typescript": "^6.0.3"
   }
 }

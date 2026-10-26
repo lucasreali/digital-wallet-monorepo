@@ -5,13 +5,15 @@
   "scripts": {
     "dev": "pnpm -r --parallel dev",
     "build": "pnpm -r build",
-    "test": "pnpm -r test",
+    "test": "vitest run",
     "up": "docker compose up --build",
     "format": "biome format --write .",
     "lint": "biome lint .",
-    "check": "biome check --write ."
+    "check": "biome check --write .",
+    "test:watch": "vitest"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.6.3"
+    "@biomejs/biome": "2.6.3",
+    "vitest": "^5.0.5"
   }
 }

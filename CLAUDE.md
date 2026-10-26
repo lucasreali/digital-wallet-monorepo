@@ -17,7 +17,7 @@ Required pieces and what exists today:
 | Azure Function | HTTP trigger, calculation/enrichment | `fn-notificacoes` (`/api/insights`) | Exists |
 | Events | Event-driven flow, shown in the video, with event docs ("Swagger — Eventos") | none | Missing. Plan: a service publishes an event (e.g. wallet created), a Function message trigger consumes it, documented with AsyncAPI/EventCatalog |
 | API Gateway | AWS API Gateway in front of the BFF | none | Missing |
-| Tests | Unit tests + architecture tests | Vitest in every backend package; use-case specs + `src/architecture.spec.ts` in both services | Covers existing slices; every new slice adds its own (see TDD) |
+| Tests | Unit tests + architecture tests | One root Vitest (`vitest.config.ts`, one project per backend package); use-case specs + `src/architecture.spec.ts` in both services | Covers existing slices; every new slice adds its own (see TDD) |
 | Docker Hub | Image for every service + BFF | Dockerfiles exist | Not pushed |
 
 Grading points from the slides:
@@ -83,9 +83,9 @@ DBs in Docker, apps on the host:
 
 Development here is test-driven. For every new use case, business rule or bug fix:
 
-1. **Red**: write the spec first (`<use-case>.use-case.spec.ts`) against the in-memory fake from `src/testing/`. If the use case needs a new port method, add it to the port and the fake. Run `pnpm --filter <name> test` and see it fail for the expected reason.
+1. **Red**: write the spec first (`<use-case>.use-case.spec.ts`) against the in-memory fake from `src/testing/`. If the use case needs a new port method, add it to the port and the fake. Run `pnpm test --project <name>` and see it fail for the expected reason.
 2. **Green**: write the smallest use case that passes. Then the controller + DTO, the adapter method and the factory in `app.module.ts`.
-3. **Refactor** with the tests green. Finish with `pnpm --filter <name> test` and `pnpm --filter <name> build`.
+3. **Refactor** with the tests green. Finish with `pnpm test`, `pnpm check` and `pnpm --filter <name> build`, then commit.
 
 - Unit tests target use cases and domain logic; they never touch a real DB or Nest DI. Instantiate with `new UseCase(new InMemoryXRepository())`.
 - Cover the happy path and every domain error the use case can throw (assert the error class, e.g. `rejects.toThrow(NotFoundError)`).
@@ -96,4 +96,4 @@ Development here is test-driven. For every new use case, business rule or bug fi
 
 - Write code, comments, docs and commit messages in English. Some existing comments are in Portuguese.
 - Biome formats and lints the whole repo (`biome.json` at the root): single quotes, 2 spaces, 120 columns, semicolons in Nest code and none in `apps/web`. Run `pnpm check` (format + lint + sorted imports, with fixes) before every commit; `pnpm lint` and `pnpm format` run each part alone. Generated code, Markdown and YAML are ignored.
-- Tests use Vitest. Root `pnpm test` runs every package; `pnpm --filter <name> test:watch` for the TDD loop. Specs live next to the code as `*.spec.ts` and are excluded from the build (`tsconfig.build.json` in the Nest services, `exclude` in `fn-notificacoes`).
+- Tests use a single Vitest installed at the root (the repo is delivered as a monorepo). `pnpm test` runs every project; `pnpm test:watch --project <name>` for the TDD loop. Packages have no `test` script of their own. Specs live next to the code as `*.spec.ts` and are excluded from the build (`tsconfig.build.json` in the Nest services, `exclude` in `fn-notificacoes`).
