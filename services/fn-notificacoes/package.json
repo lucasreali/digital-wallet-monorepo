@@ -1,0 +1,21 @@
+{
+  "name": "fn-notificacoes",
+  "private": true,
+  "main": "dist/functions/*.js",
+  "files": [
+    "dist",
+    "host.json"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w",
+    "start": "func start"
+  },
+  "dependencies": {
+    "@azure/functions": "^4.17.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^6.0.3"
+  }
+}

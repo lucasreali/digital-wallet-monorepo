@@ -1,0 +1,8 @@
+services:
+  fn-notificacoes:
+    platform: linux/amd64
+    build:
+      context: ../..
+      dockerfile: services/fn-notificacoes/Dockerfile
+    ports:
+      - "7071:80"
