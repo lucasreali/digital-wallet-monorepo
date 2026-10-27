@@ -3,6 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { WalletRepository } from './domain/wallet.repository';
 import { CreateWalletController } from './features/create-wallet/create-wallet.controller';
 import { CreateWallet } from './features/create-wallet/create-wallet.use-case';
+import { GetWalletController } from './features/get-wallet/get-wallet.controller';
+import { GetWallet } from './features/get-wallet/get-wallet.use-case';
 import { ListWalletsController } from './features/list-wallets/list-wallets.controller';
 import { ListWallets } from './features/list-wallets/list-wallets.use-case';
 import { SqlWalletRepository, WalletRow } from './infrastructure/sql-wallet.repository';
@@ -18,12 +20,12 @@ import { SqlWalletRepository, WalletRow } from './infrastructure/sql-wallet.repo
       database: process.env.DB_NAME ?? 'carteira',
       options: { encrypt: true, trustServerCertificate: process.env.DB_TRUST_CERT === 'true' },
       entities: [WalletRow],
-      // shortcut: cria as tabelas sozinho; trocar por migrations antes de dados reais
+      // shortcut: creates the tables by itself; switch to migrations before real data
       synchronize: true,
     }),
     TypeOrmModule.forFeature([WalletRow]),
   ],
-  controllers: [CreateWalletController, ListWalletsController],
+  controllers: [CreateWalletController, ListWalletsController, GetWalletController],
   providers: [
     { provide: WalletRepository, useClass: SqlWalletRepository },
     // Use cases stay framework-free, so Nest builds them through factories
@@ -35,6 +37,11 @@ import { SqlWalletRepository, WalletRow } from './infrastructure/sql-wallet.repo
     {
       provide: ListWallets,
       useFactory: (wallets: WalletRepository) => new ListWallets(wallets),
+      inject: [WalletRepository],
+    },
+    {
+      provide: GetWallet,
+      useFactory: (wallets: WalletRepository) => new GetWallet(wallets),
       inject: [WalletRepository],
     },
   ],

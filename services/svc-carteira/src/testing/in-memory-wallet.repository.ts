@@ -19,4 +19,8 @@ export class InMemoryWalletRepository extends WalletRepository {
   async findByOwner(ownerId: string): Promise<Wallet | null> {
     return this.wallets.find((w) => w.ownerId === ownerId) ?? null;
   }
+
+  async findById(id: string): Promise<Wallet | null> {
+    return this.wallets.find((w) => w.id === id) ?? null;
+  }
 }
