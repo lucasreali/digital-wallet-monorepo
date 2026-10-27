@@ -20,3 +20,14 @@ export const parseMoney = (text: string) => {
   const normalized = clean.includes(',') ? clean.replace(/\./g, '').replace(',', '.') : clean
   return /^\d+(\.\d{1,2})?$/.test(normalized) ? Number(normalized) : Number.NaN
 }
+
+/** "há 5 min", "há 2 h", "há 3 dias" */
+export const relativeTime = (iso: string, now = Date.now()) => {
+  const minutes = Math.round((now - new Date(iso).getTime()) / 60000)
+  if (minutes < 1) return 'agora'
+  if (minutes < 60) return `há ${minutes} min`
+  const hours = Math.round(minutes / 60)
+  if (hours < 24) return `há ${hours} h`
+  const days = Math.round(hours / 24)
+  return `há ${days} ${days === 1 ? 'dia' : 'dias'}`
+}
