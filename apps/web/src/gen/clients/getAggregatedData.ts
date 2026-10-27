@@ -8,7 +8,7 @@ import type { GetAggregatedDataOptions, GetAggregatedDataResponses } from '../ty
 import { client, withUnwrap } from '../.kubb/client'
 
 /**
- * @summary Junta os dois microsserviços e a Function em uma única resposta
+ * @summary Joins both microservices and the Function in one response; 502 if any of them is unavailable
  * {@link /aggregated-data}
  */
 export function getAggregatedData<ThrowOnError extends boolean = true>(options: Options<GetAggregatedDataOptions, ThrowOnError> = {}): Unwrappable<RequestResult<GetAggregatedDataResponses, ThrowOnError>> {

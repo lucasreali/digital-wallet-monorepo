@@ -3,20 +3,24 @@
 * Do not edit manually.
 */
 
+import type { Insights } from './Insights'
+import type { User } from './User'
+import type { Wallet } from './Wallet'
+
 export type AggregatedDataDto = {
   /**
-   * @description Vem do svc-identidade (MongoDB)
+   * @description From svc-identidade (MongoDB)
    * @type array
    */
-  users: object[];
+  users: User[];
   /**
-   * @description Vem do svc-carteira (Azure SQL)
+   * @description From svc-carteira (Azure SQL)
    * @type array
    */
-  wallets: object[];
+  wallets: Wallet[];
   /**
-   * @description Vem da fn-notificacoes (Azure Function)
+   * @description From fn-notificacoes (Azure Function)
    * @type object
    */
-  insights: object;
+  insights: Insights;
 };

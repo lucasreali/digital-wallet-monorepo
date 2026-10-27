@@ -4,9 +4,12 @@
 */
 
 import * as z from 'zod'
+import { insightsSchema } from './insightsSchema'
+import { userSchema } from './userSchema'
+import { walletSchema } from './walletSchema'
 
 export const aggregatedDataDtoSchema = z.object({
-  users: z.array(z.object({})).describe('Vem do svc-identidade (MongoDB)'),
-  wallets: z.array(z.object({})).describe('Vem do svc-carteira (Azure SQL)'),
-  insights: z.object({}).describe('Vem da fn-notificacoes (Azure Function)'),
+  users: z.array(userSchema).describe('From svc-identidade (MongoDB)'),
+  wallets: z.array(walletSchema).describe('From svc-carteira (Azure SQL)'),
+  insights: insightsSchema.describe('From fn-notificacoes (Azure Function)'),
 })

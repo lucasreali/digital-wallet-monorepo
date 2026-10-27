@@ -1,6 +1,423 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/users": {
+      "get": {
+        "operationId": "listUsers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Lists every user (svc-identidade)",
+        "tags": [
+          "ListUsers"
+        ]
+      },
+      "post": {
+        "operationId": "createUser",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Creates a user; 409 if the email is already in use",
+        "tags": [
+          "CreateUser"
+        ]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "operationId": "getUser",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Gets one user; 404 if it does not exist",
+        "tags": [
+          "GetUser"
+        ]
+      },
+      "patch": {
+        "operationId": "updateUser",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Updates a user's name and/or email; 404 if it does not exist, 409 if the email is taken",
+        "tags": [
+          "UpdateUser"
+        ]
+      },
+      "delete": {
+        "operationId": "deleteUser",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "summary": "Deletes a user; 404 if it does not exist, 409 while the user still owns a wallet",
+        "tags": [
+          "DeleteUser"
+        ]
+      }
+    },
+    "/wallets": {
+      "get": {
+        "operationId": "listWallets",
+        "parameters": [
+          {
+            "name": "ownerId",
+            "required": false,
+            "in": "query",
+            "description": "Only the wallets of this user",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Wallet"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Lists every wallet (svc-carteira), optionally filtered by owner",
+        "tags": [
+          "ListWallets"
+        ]
+      },
+      "post": {
+        "operationId": "openWallet",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenWalletDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Wallet"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Opens a wallet for a user; 409 if the user already has one",
+        "tags": [
+          "OpenWallet"
+        ]
+      }
+    },
+    "/wallets/{id}": {
+      "get": {
+        "operationId": "getWallet",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Wallet"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Gets one wallet; 404 if it does not exist",
+        "tags": [
+          "GetWallet"
+        ]
+      },
+      "delete": {
+        "operationId": "closeWallet",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "summary": "Closes a wallet; 404 if it does not exist, 409 if the balance is not zero",
+        "tags": [
+          "CloseWallet"
+        ]
+      }
+    },
+    "/wallets/{id}/deposit": {
+      "post": {
+        "operationId": "deposit",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepositDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Wallet"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Adds money to a wallet; 404 if it does not exist, 422 for an invalid amount",
+        "tags": [
+          "Deposit"
+        ]
+      }
+    },
+    "/wallets/{id}/withdraw": {
+      "post": {
+        "operationId": "withdraw",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WithdrawDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Wallet"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Takes money from a wallet; 404 if it does not exist, 422 for insufficient funds or an invalid amount",
+        "tags": [
+          "Withdraw"
+        ]
+      }
+    },
+    "/wallets/{id}/transactions": {
+      "get": {
+        "operationId": "listTransactions",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Lists a wallet's transactions, newest first; 404 if the wallet does not exist",
+        "tags": [
+          "ListTransactions"
+        ]
+      }
+    },
+    "/activity": {
+      "get": {
+        "operationId": "listActivity",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Maximum number of events to return",
+            "schema": {
+              "minimum": 1,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActivityEvent"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Activity feed: the latest wallet events stored by fn-notificacoes, newest first",
+        "tags": [
+          "ListActivity"
+        ]
+      }
+    },
     "/aggregated-data": {
       "get": {
         "operationId": "getAggregatedData",
@@ -17,9 +434,9 @@
             }
           }
         },
-        "summary": "Junta os dois microsserviços e a Function em uma única resposta",
+        "summary": "Joins both microservices and the Function in one response; 502 if any of them is unavailable",
         "tags": [
-          "AggregatedData"
+          "GetAggregatedData"
         ]
       }
     }
@@ -34,26 +451,225 @@
   "servers": [],
   "components": {
     "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User id in svc-identidade (MongoDB)"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email"
+        ]
+      },
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "required": [
+          "name",
+          "email"
+        ]
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
+        }
+      },
+      "Wallet": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Wallet id in svc-carteira (Azure SQL)"
+          },
+          "ownerId": {
+            "type": "string",
+            "description": "Id of the owning user in svc-identidade"
+          },
+          "balance": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "ownerId",
+          "balance"
+        ]
+      },
+      "OpenWalletDto": {
+        "type": "object",
+        "properties": {
+          "ownerId": {
+            "type": "string",
+            "description": "Id of the owning user in svc-identidade"
+          }
+        },
+        "required": [
+          "ownerId"
+        ]
+      },
+      "DepositDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Amount in BRL, at least 0.01",
+            "minimum": 0.01
+          }
+        },
+        "required": [
+          "amount"
+        ]
+      },
+      "WithdrawDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Amount in BRL, at least 0.01",
+            "minimum": 0.01
+          }
+        },
+        "required": [
+          "amount"
+        ]
+      },
+      "Transaction": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "walletId": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "deposit",
+              "withdrawal"
+            ]
+          },
+          "amount": {
+            "type": "number"
+          },
+          "balanceAfter": {
+            "type": "number",
+            "description": "Wallet balance right after this transaction"
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "ISO 8601 timestamp"
+          }
+        },
+        "required": [
+          "id",
+          "walletId",
+          "type",
+          "amount",
+          "balanceAfter",
+          "createdAt"
+        ]
+      },
+      "ActivityEvent": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Event id (uuid)"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "UserCreated",
+              "WalletOpened",
+              "Deposit",
+              "Withdrawal",
+              "WalletClosed"
+            ]
+          },
+          "occurredAt": {
+            "type": "string",
+            "description": "ISO 8601 timestamp"
+          },
+          "data": {
+            "type": "object",
+            "additionalProperties": true,
+            "description": "Event payload; its fields depend on the event type"
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "occurredAt",
+          "data"
+        ]
+      },
+      "Insights": {
+        "type": "object",
+        "properties": {
+          "score": {
+            "type": "number",
+            "description": "Score from 0 to 1000 computed by fn-notificacoes from the stored events"
+          },
+          "generatedAt": {
+            "type": "string",
+            "description": "ISO 8601 timestamp"
+          }
+        },
+        "required": [
+          "score",
+          "generatedAt"
+        ]
+      },
       "AggregatedDataDto": {
         "type": "object",
         "properties": {
           "users": {
-            "description": "Vem do svc-identidade (MongoDB)",
+            "description": "From svc-identidade (MongoDB)",
             "type": "array",
             "items": {
-              "type": "object"
+              "$ref": "#/components/schemas/User"
             }
           },
           "wallets": {
-            "description": "Vem do svc-carteira (Azure SQL)",
+            "description": "From svc-carteira (Azure SQL)",
             "type": "array",
             "items": {
-              "type": "object"
+              "$ref": "#/components/schemas/Wallet"
             }
           },
           "insights": {
-            "type": "object",
-            "description": "Vem da fn-notificacoes (Azure Function)"
+            "description": "From fn-notificacoes (Azure Function)",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Insights"
+              }
+            ]
           }
         },
         "required": [

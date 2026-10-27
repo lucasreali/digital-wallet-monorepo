@@ -24,7 +24,7 @@ export function getAggregatedDataQueryOptions(config: Partial<Omit<RequestConfig
 }
 
 /**
- * @summary Junta os dois microsserviços e a Function em uma única resposta
+ * @summary Joins both microservices and the Function in one response; 502 if any of them is unavailable
  * {@link /aggregated-data}
  */
 export function useGetAggregatedData<TData = GetAggregatedDataStatus200, TQueryData = GetAggregatedDataStatus200, TQueryKey extends QueryKey = GetAggregatedDataQueryKey>(options: {
