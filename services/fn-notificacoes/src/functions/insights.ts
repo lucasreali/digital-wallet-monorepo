@@ -1,8 +1,15 @@
 import { app } from '@azure/functions';
+import { listEvents } from '../event-store';
+import { computeScore } from '../score';
 
-// Enriquecimento chamado pelo BFF; trocar o valor fixo pela regra real (score, categorização do extrato...)
+// Enrichment called by the BFF: financial score computed from the consumed events
 app.http('insights', {
   methods: ['GET'],
   authLevel: 'anonymous',
-  handler: async () => ({ jsonBody: { score: 720, generatedAt: new Date().toISOString() } }),
+  handler: async (request) => ({
+    jsonBody: {
+      score: computeScore(await listEvents(), request.query.get('ownerId') ?? undefined),
+      generatedAt: new Date().toISOString(),
+    },
+  }),
 });
