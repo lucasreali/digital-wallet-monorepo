@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel, Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import type { HydratedDocument, Model } from 'mongoose';
+import { type HydratedDocument, isValidObjectId, type Model } from 'mongoose';
 import type { User } from '../domain/user.entity';
 import { UserRepository } from '../domain/user.repository';
 
@@ -27,6 +27,13 @@ export class MongoUserRepository extends UserRepository {
 
   async findByEmail(email: string): Promise<User | null> {
     const doc = await this.users.findOne({ email });
+    return doc && toDomain(doc);
+  }
+
+  async findById(id: string): Promise<User | null> {
+    // A malformed id cannot match any user: report "not found" instead of a cast error (500)
+    if (!isValidObjectId(id)) return null;
+    const doc = await this.users.findById(id);
     return doc && toDomain(doc);
   }
 }

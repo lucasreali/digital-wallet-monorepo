@@ -1,11 +1,13 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Inject, Post } from '@nestjs/common';
 import type { User } from '../../domain/user.entity';
-import type { CreateUserDto } from './create-user.dto';
-import type { CreateUser } from './create-user.use-case';
+// biome-ignore lint/style/useImportType: ValidationPipe and Swagger read the DTO class at runtime
+import { CreateUserDto } from './create-user.dto';
+import { CreateUser } from './create-user.use-case';
 
 @Controller('users')
 export class CreateUserController {
-  constructor(private readonly createUser: CreateUser) {}
+  // Explicit token: the use case has no @Injectable() and type-only imports erase its metadata
+  constructor(@Inject(CreateUser) private readonly createUser: CreateUser) {}
 
   /** Registers a user; 409 if the email is already in use */
   @Post()
