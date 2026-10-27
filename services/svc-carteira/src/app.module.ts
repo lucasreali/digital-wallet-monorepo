@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventPublisher } from './domain/event-publisher';
 import { WalletRepository } from './domain/wallet.repository';
+import { CloseWalletController } from './features/close-wallet/close-wallet.controller';
+import { CloseWallet } from './features/close-wallet/close-wallet.use-case';
 import { CreateWalletController } from './features/create-wallet/create-wallet.controller';
 import { CreateWallet } from './features/create-wallet/create-wallet.use-case';
 import { DepositController } from './features/deposit/deposit.controller';
@@ -37,6 +39,7 @@ import { SqlWalletRepository, TransactionRow, WalletRow } from './infrastructure
     GetWalletController,
     DepositController,
     WithdrawController,
+    CloseWalletController,
   ],
   providers: [
     { provide: WalletRepository, useClass: SqlWalletRepository },
@@ -65,6 +68,11 @@ import { SqlWalletRepository, TransactionRow, WalletRow } from './infrastructure
     {
       provide: Withdraw,
       useFactory: (wallets: WalletRepository, events: EventPublisher) => new Withdraw(wallets, events),
+      inject: [WalletRepository, EventPublisher],
+    },
+    {
+      provide: CloseWallet,
+      useFactory: (wallets: WalletRepository, events: EventPublisher) => new CloseWallet(wallets, events),
       inject: [WalletRepository, EventPublisher],
     },
   ],

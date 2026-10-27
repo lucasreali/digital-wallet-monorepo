@@ -36,6 +36,14 @@ export class InMemoryWalletRepository extends WalletRepository {
     return transaction;
   }
 
+  async remove(wallet: Wallet): Promise<void> {
+    if (!this.wallets.some((w) => w.id === wallet.id && w.balance === wallet.balance)) {
+      throw new ConflictError(`Wallet ${wallet.id} changed meanwhile`);
+    }
+    this.wallets = this.wallets.filter((w) => w.id !== wallet.id);
+    this.transactions = this.transactions.filter((t) => t.walletId !== wallet.id);
+  }
+
   async findTransactions(walletId: string): Promise<Transaction[]> {
     return this.transactions.filter((t) => t.walletId === walletId).reverse();
   }

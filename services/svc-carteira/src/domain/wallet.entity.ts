@@ -1,4 +1,4 @@
-import { InsufficientFundsError, InvalidAmountError } from './errors';
+import { InsufficientFundsError, InvalidAmountError, WalletNotEmptyError } from './errors';
 
 export class Wallet {
   id: string;
@@ -26,4 +26,8 @@ export const debit = (wallet: Wallet, amount: number): Wallet => {
   const cents = toCents(wallet.balance) - amountInCents(amount);
   if (cents < 0) throw new InsufficientFundsError(wallet.balance, amount);
   return { ...wallet, balance: cents / 100 };
+};
+
+export const assertCanClose = (wallet: Wallet): void => {
+  if (toCents(wallet.balance) !== 0) throw new WalletNotEmptyError(wallet.balance);
 };

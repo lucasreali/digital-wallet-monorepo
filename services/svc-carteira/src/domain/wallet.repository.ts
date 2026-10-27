@@ -12,6 +12,8 @@ export abstract class WalletRepository {
    * `wallet` is the state the use case read; throws ConflictError if it changed meanwhile.
    */
   abstract record(wallet: Wallet, entry: NewTransaction): Promise<Transaction>;
+  /** Deletes the wallet and its transactions; throws ConflictError if `wallet` changed meanwhile */
+  abstract remove(wallet: Wallet): Promise<void>;
   /** Newest first */
   abstract findTransactions(walletId: string): Promise<Transaction[]>;
 }

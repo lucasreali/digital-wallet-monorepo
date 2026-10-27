@@ -70,6 +70,14 @@ export class SqlWalletRepository extends WalletRepository {
     });
   }
 
+  remove(wallet: Wallet): Promise<void> {
+    return this.wallets.manager.transaction(async (tx) => {
+      await tx.delete(TransactionRow, { walletId: wallet.id });
+      const { affected } = await tx.delete(WalletRow, { id: wallet.id, balance: wallet.balance });
+      if (!affected) throw new ConflictError(`Wallet ${wallet.id} changed meanwhile, retry`);
+    });
+  }
+
   async findTransactions(walletId: string): Promise<Transaction[]> {
     const rows = await this.wallets.manager.find(TransactionRow, { where: { walletId }, order: { createdAt: 'DESC' } });
     return rows.map(toTransaction);
