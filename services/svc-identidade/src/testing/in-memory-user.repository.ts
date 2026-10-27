@@ -28,4 +28,8 @@ export class InMemoryUserRepository extends UserRepository {
     const user = this.users.find((u) => u.id === id);
     return user ? Object.assign(user, data) : null;
   }
+
+  async delete(id: string): Promise<void> {
+    this.users = this.users.filter((u) => u.id !== id);
+  }
 }

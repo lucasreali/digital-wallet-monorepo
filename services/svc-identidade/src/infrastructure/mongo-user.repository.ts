@@ -42,6 +42,10 @@ export class MongoUserRepository extends UserRepository {
     const doc = await this.users.findByIdAndUpdate(id, data, { returnDocument: 'after' });
     return doc && toDomain(doc);
   }
+
+  async delete(id: string): Promise<void> {
+    if (isValidObjectId(id)) await this.users.findByIdAndDelete(id);
+  }
 }
 
 const toDomain = (doc: HydratedDocument<UserDocument>): User => ({ id: doc.id, name: doc.name, email: doc.email });
