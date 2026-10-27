@@ -23,7 +23,7 @@
   "overrides": [
     { "includes": ["apps/web/**"], "javascript": { "formatter": { "semicolons": "asNeeded" } } },
     {
-      "includes": ["apps/bff/**"],
+      "includes": ["apps/bff/**", "services/svc-identidade/**", "services/svc-carteira/**"],
       "linter": { "rules": { "style": { "useImportType": "off" } } }
     }
   ]
