@@ -10,13 +10,15 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-Carteira@Local123}
       DB_NAME: ${DB_NAME:-carteira}
       DB_TRUST_CERT: ${DB_TRUST_CERT:-true}
+      # Event broker; the default is the Azurite emulator from services/fn-notificacoes/docker-compose.yml
+      AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING:-DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;}
     ports:
       - "3002:3000"
     depends_on:
       sql-carteira-init:
         condition: service_completed_successfully
 
-  # Mesmo motor do Azure SQL; em produção aponte DB_HOST para o servidor do Azure
+  # Same engine as Azure SQL; in production point DB_HOST at the Azure server
   sql-carteira:
     image: mcr.microsoft.com/mssql/server:2022-latest
     platform: linux/amd64
@@ -32,7 +34,7 @@ services:
       interval: 5s
       retries: 20
 
-  # A imagem do SQL Server não cria banco por variável de ambiente
+  # The SQL Server image cannot create a database from an environment variable
   sql-carteira-init:
     image: mcr.microsoft.com/mssql/server:2022-latest
     platform: linux/amd64

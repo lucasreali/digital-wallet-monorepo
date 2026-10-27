@@ -1,5 +1,5 @@
-# Sobe tudo: docker compose up --build
-# Cada serviço também sobe sozinho: docker compose -f services/<svc>/docker-compose.yml up --build
+# Start everything: docker compose up --build
+# Each service also starts alone: docker compose -f services/<svc>/docker-compose.yml up --build
 include:
   - services/svc-identidade/docker-compose.yml
   - services/svc-carteira/docker-compose.yml

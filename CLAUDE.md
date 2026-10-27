@@ -41,6 +41,7 @@ pnpm enforces a minimum release age: very recent dependency versions get rejecte
 DBs in Docker, apps on the host:
 
 - `docker compose up mongo-identidade sql-carteira sql-carteira-init`
+- `docker compose up azurite` for the event broker (Storage Queue `wallet-events`) and the Function's Table Storage; on the host use `AZURE_STORAGE_CONNECTION_STRING=UseDevelopmentStorage=true`
 - Every Nest app defaults to `PORT=3000`, so root `pnpm dev` clashes. BFF expects identidade on 3001 and carteira on 3002:
   - `PORT=3001 pnpm --filter svc-identidade dev`
   - `PORT=3002 DB_PASSWORD='Carteira@Local123' DB_TRUST_CERT=true pnpm --filter svc-carteira dev`
