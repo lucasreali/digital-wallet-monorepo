@@ -1,6 +1,6 @@
 # Build a partir da raiz: docker build -f apps/web/Dockerfile --build-arg VITE_BFF_URL=https://<api-gateway> .
 FROM node:24-alpine AS build
-# Embutida no bundle no build: é a URL que o navegador usa para chamar o BFF
+# Inlined into the bundle at build time: the URL the browser uses to call the BFF
 ARG VITE_BFF_URL=http://localhost:3000
 RUN npm i -g pnpm@12.14.0
 WORKDIR /repo

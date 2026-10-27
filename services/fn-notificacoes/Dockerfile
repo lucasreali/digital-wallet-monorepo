@@ -1,4 +1,4 @@
-# Build a partir da raiz: docker build -f services/fn-notificacoes/Dockerfile .
+# Build from the repo root: docker build -f services/fn-notificacoes/Dockerfile .
 FROM node:22-alpine AS build
 RUN npm i -g pnpm@12.14.0
 WORKDIR /repo

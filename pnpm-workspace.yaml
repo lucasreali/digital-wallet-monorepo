@@ -2,12 +2,12 @@ packages:
   - apps/*
   - services/*
 
-# pnpm deploy (usado nos Dockerfiles) exige isso
+# Required by pnpm deploy (used in the Dockerfiles)
 injectWorkspacePackages: true
 
 allowBuilds:
-  '@scarf/scarf': false # telemetria do swagger-ui, não precisa rodar
-  es5-ext: false # só imprime mensagem no postinstall
+  '@scarf/scarf': false # swagger-ui telemetry, no need to run it
+  es5-ext: false # postinstall only prints a message
   esbuild: true
   lightningcss: true
 
