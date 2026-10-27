@@ -10,6 +10,8 @@ import { DepositController } from './features/deposit/deposit.controller';
 import { Deposit } from './features/deposit/deposit.use-case';
 import { GetWalletController } from './features/get-wallet/get-wallet.controller';
 import { GetWallet } from './features/get-wallet/get-wallet.use-case';
+import { ListTransactionsController } from './features/list-transactions/list-transactions.controller';
+import { ListTransactions } from './features/list-transactions/list-transactions.use-case';
 import { ListWalletsController } from './features/list-wallets/list-wallets.controller';
 import { ListWallets } from './features/list-wallets/list-wallets.use-case';
 import { WithdrawController } from './features/withdraw/withdraw.controller';
@@ -40,6 +42,7 @@ import { SqlWalletRepository, TransactionRow, WalletRow } from './infrastructure
     DepositController,
     WithdrawController,
     CloseWalletController,
+    ListTransactionsController,
   ],
   providers: [
     { provide: WalletRepository, useClass: SqlWalletRepository },
@@ -58,6 +61,11 @@ import { SqlWalletRepository, TransactionRow, WalletRow } from './infrastructure
     {
       provide: GetWallet,
       useFactory: (wallets: WalletRepository) => new GetWallet(wallets),
+      inject: [WalletRepository],
+    },
+    {
+      provide: ListTransactions,
+      useFactory: (wallets: WalletRepository) => new ListTransactions(wallets),
       inject: [WalletRepository],
     },
     {
