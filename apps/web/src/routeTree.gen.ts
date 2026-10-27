@@ -10,33 +10,115 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AtividadeRouteImport } from './routes/atividade'
+import { Route as SobreRouteImport } from './routes/sobre'
+import { Route as CarteirasIndexRouteImport } from './routes/carteiras/index'
+import { Route as CarteirasWalletIdRouteImport } from './routes/carteiras/$walletId'
+import { Route as UsuariosIndexRouteImport } from './routes/usuarios/index'
+import { Route as UsuariosUserIdRouteImport } from './routes/usuarios/$userId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AtividadeRoute = AtividadeRouteImport.update({
+  id: '/atividade',
+  path: '/atividade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SobreRoute = SobreRouteImport.update({
+  id: '/sobre',
+  path: '/sobre',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarteirasIndexRoute = CarteirasIndexRouteImport.update({
+  id: '/carteiras/',
+  path: '/carteiras/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CarteirasWalletIdRoute = CarteirasWalletIdRouteImport.update({
+  id: '/carteiras/$walletId',
+  path: '/carteiras/$walletId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UsuariosIndexRoute = UsuariosIndexRouteImport.update({
+  id: '/usuarios/',
+  path: '/usuarios/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UsuariosUserIdRoute = UsuariosUserIdRouteImport.update({
+  id: '/usuarios/$userId',
+  path: '/usuarios/$userId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/atividade': typeof AtividadeRoute
+  '/sobre': typeof SobreRoute
+  '/carteiras/$walletId': typeof CarteirasWalletIdRoute
+  '/usuarios/$userId': typeof UsuariosUserIdRoute
+  '/carteiras/': typeof CarteirasIndexRoute
+  '/usuarios/': typeof UsuariosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/atividade': typeof AtividadeRoute
+  '/sobre': typeof SobreRoute
+  '/carteiras/$walletId': typeof CarteirasWalletIdRoute
+  '/usuarios/$userId': typeof UsuariosUserIdRoute
+  '/carteiras': typeof CarteirasIndexRoute
+  '/usuarios': typeof UsuariosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/atividade': typeof AtividadeRoute
+  '/sobre': typeof SobreRoute
+  '/carteiras/$walletId': typeof CarteirasWalletIdRoute
+  '/usuarios/$userId': typeof UsuariosUserIdRoute
+  '/carteiras/': typeof CarteirasIndexRoute
+  '/usuarios/': typeof UsuariosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/atividade'
+    | '/sobre'
+    | '/carteiras/$walletId'
+    | '/usuarios/$userId'
+    | '/carteiras/'
+    | '/usuarios/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/atividade'
+    | '/sobre'
+    | '/carteiras/$walletId'
+    | '/usuarios/$userId'
+    | '/carteiras'
+    | '/usuarios'
+  id:
+    | '__root__'
+    | '/'
+    | '/atividade'
+    | '/sobre'
+    | '/carteiras/$walletId'
+    | '/usuarios/$userId'
+    | '/carteiras/'
+    | '/usuarios/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AtividadeRoute: typeof AtividadeRoute
+  SobreRoute: typeof SobreRoute
+  CarteirasWalletIdRoute: typeof CarteirasWalletIdRoute
+  UsuariosUserIdRoute: typeof UsuariosUserIdRoute
+  CarteirasIndexRoute: typeof CarteirasIndexRoute
+  UsuariosIndexRoute: typeof UsuariosIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +130,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/atividade': {
+      id: '/atividade'
+      path: '/atividade'
+      fullPath: '/atividade'
+      preLoaderRoute: typeof AtividadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sobre': {
+      id: '/sobre'
+      path: '/sobre'
+      fullPath: '/sobre'
+      preLoaderRoute: typeof SobreRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/carteiras/': {
+      id: '/carteiras/'
+      path: '/carteiras'
+      fullPath: '/carteiras/'
+      preLoaderRoute: typeof CarteirasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/carteiras/$walletId': {
+      id: '/carteiras/$walletId'
+      path: '/carteiras/$walletId'
+      fullPath: '/carteiras/$walletId'
+      preLoaderRoute: typeof CarteirasWalletIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/usuarios/': {
+      id: '/usuarios/'
+      path: '/usuarios'
+      fullPath: '/usuarios/'
+      preLoaderRoute: typeof UsuariosIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/usuarios/$userId': {
+      id: '/usuarios/$userId'
+      path: '/usuarios/$userId'
+      fullPath: '/usuarios/$userId'
+      preLoaderRoute: typeof UsuariosUserIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AtividadeRoute: AtividadeRoute,
+  SobreRoute: SobreRoute,
+  CarteirasWalletIdRoute: CarteirasWalletIdRoute,
+  UsuariosUserIdRoute: UsuariosUserIdRoute,
+  CarteirasIndexRoute: CarteirasIndexRoute,
+  UsuariosIndexRoute: UsuariosIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
