@@ -12,6 +12,7 @@
     "start": "func start"
   },
   "dependencies": {
+    "@azure/data-tables": "^13.3.2",
     "@azure/functions": "^4.17.0"
   },
   "devDependencies": {
