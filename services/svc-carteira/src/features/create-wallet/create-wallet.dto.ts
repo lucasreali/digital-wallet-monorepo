@@ -1,7 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
 
 export class CreateWalletDto {
-  /** Id do usuário no svc-identidade */
+  /** User id from svc-identidade */
   @IsNotEmpty()
   ownerId: string;
 }

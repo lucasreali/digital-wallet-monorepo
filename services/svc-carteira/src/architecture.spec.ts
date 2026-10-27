@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 // Architecture tests (ArchUnit-style): fail the build when a layer rule is broken
 const SRC = __dirname;
-const FRAMEWORKS = /^(@nestjs\/|typeorm|mongoose|mssql|class-validator|class-transformer)/;
+const FRAMEWORKS = /^(@nestjs\/|@azure\/|typeorm|mongoose|mssql|class-validator|class-transformer)/;
 
 // Production files only, with each import resolved to a src-relative path (packages kept as-is)
 const files = readdirSync(SRC, { recursive: true, encoding: 'utf8' })

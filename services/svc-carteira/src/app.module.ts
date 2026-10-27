@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { EventPublisher } from './domain/event-publisher';
 import { WalletRepository } from './domain/wallet.repository';
 import { CreateWalletController } from './features/create-wallet/create-wallet.controller';
 import { CreateWallet } from './features/create-wallet/create-wallet.use-case';
@@ -7,6 +8,7 @@ import { GetWalletController } from './features/get-wallet/get-wallet.controller
 import { GetWallet } from './features/get-wallet/get-wallet.use-case';
 import { ListWalletsController } from './features/list-wallets/list-wallets.controller';
 import { ListWallets } from './features/list-wallets/list-wallets.use-case';
+import { QueueEventPublisher } from './infrastructure/queue-event-publisher';
 import { SqlWalletRepository, WalletRow } from './infrastructure/sql-wallet.repository';
 
 @Module({
@@ -28,11 +30,12 @@ import { SqlWalletRepository, WalletRow } from './infrastructure/sql-wallet.repo
   controllers: [CreateWalletController, ListWalletsController, GetWalletController],
   providers: [
     { provide: WalletRepository, useClass: SqlWalletRepository },
+    { provide: EventPublisher, useClass: QueueEventPublisher },
     // Use cases stay framework-free, so Nest builds them through factories
     {
       provide: CreateWallet,
-      useFactory: (wallets: WalletRepository) => new CreateWallet(wallets),
-      inject: [WalletRepository],
+      useFactory: (wallets: WalletRepository, events: EventPublisher) => new CreateWallet(wallets, events),
+      inject: [WalletRepository, EventPublisher],
     },
     {
       provide: ListWallets,
