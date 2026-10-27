@@ -1,8 +1,9 @@
-import { IsNumber, IsPositive } from 'class-validator';
+import { IsNumber, Min } from 'class-validator';
 
 export class DepositDto {
-  /** Amount in BRL, greater than zero */
+  /** Amount in BRL, at least 0.01 */
   @IsNumber()
-  @IsPositive()
+  // Not @IsPositive: the Swagger plugin turns it into minimum 1 and the generated Zod schema would reject cents
+  @Min(0.01)
   amount: number;
 }

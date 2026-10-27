@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { IdentityService } from './domain/identity.service';
 import { NotificationsService } from './domain/notifications.service';
 import { WalletService } from './domain/wallet.service';
-import { AggregatedDataController } from './features/aggregated-data/aggregated-data.controller';
 import { CloseWalletController } from './features/close-wallet/close-wallet.controller';
 import { CloseWallet } from './features/close-wallet/close-wallet.use-case';
 import { CreateUserController } from './features/create-user/create-user.controller';
@@ -11,10 +10,14 @@ import { DeleteUserController } from './features/delete-user/delete-user.control
 import { DeleteUser } from './features/delete-user/delete-user.use-case';
 import { DepositController } from './features/deposit/deposit.controller';
 import { Deposit } from './features/deposit/deposit.use-case';
+import { GetAggregatedDataController } from './features/get-aggregated-data/get-aggregated-data.controller';
+import { GetAggregatedData } from './features/get-aggregated-data/get-aggregated-data.use-case';
 import { GetUserController } from './features/get-user/get-user.controller';
 import { GetUser } from './features/get-user/get-user.use-case';
 import { GetWalletController } from './features/get-wallet/get-wallet.controller';
 import { GetWallet } from './features/get-wallet/get-wallet.use-case';
+import { ListActivityController } from './features/list-activity/list-activity.controller';
+import { ListActivity } from './features/list-activity/list-activity.use-case';
 import { ListTransactionsController } from './features/list-transactions/list-transactions.controller';
 import { ListTransactions } from './features/list-transactions/list-transactions.use-case';
 import { ListUsersController } from './features/list-users/list-users.controller';
@@ -53,7 +56,8 @@ const useCase = <T>(UseCase: new (...ports: any[]) => T, ...inject: unknown[]) =
     WithdrawController,
     CloseWalletController,
     ListTransactionsController,
-    AggregatedDataController,
+    ListActivityController,
+    GetAggregatedDataController,
   ],
   providers: [
     { provide: IdentityService, useClass: HttpIdentityService },
@@ -71,6 +75,8 @@ const useCase = <T>(UseCase: new (...ports: any[]) => T, ...inject: unknown[]) =
     useCase(Withdraw, WalletService),
     useCase(CloseWallet, WalletService),
     useCase(ListTransactions, WalletService),
+    useCase(ListActivity, NotificationsService),
+    useCase(GetAggregatedData, IdentityService, WalletService, NotificationsService),
   ],
 })
 export class AppModule {}
