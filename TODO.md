@@ -66,7 +66,7 @@ Build every screen from `docs/prototype.html`, using only the generated hooks (t
 - [x] About the system (Sobre o sistema): the architecture components
 - [x] Loading, empty, error and success states on every screen
 - [x] Forms validated before sending
-- [x] Production build points to the API Gateway URL, not `localhost`
+- [ ] Production build points to the API Gateway URL, not `localhost`
 
 ## 7. Architecture and quality
 
