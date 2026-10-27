@@ -4,12 +4,14 @@ import { EventPublisher } from './domain/event-publisher';
 import { WalletRepository } from './domain/wallet.repository';
 import { CreateWalletController } from './features/create-wallet/create-wallet.controller';
 import { CreateWallet } from './features/create-wallet/create-wallet.use-case';
+import { DepositController } from './features/deposit/deposit.controller';
+import { Deposit } from './features/deposit/deposit.use-case';
 import { GetWalletController } from './features/get-wallet/get-wallet.controller';
 import { GetWallet } from './features/get-wallet/get-wallet.use-case';
 import { ListWalletsController } from './features/list-wallets/list-wallets.controller';
 import { ListWallets } from './features/list-wallets/list-wallets.use-case';
 import { QueueEventPublisher } from './infrastructure/queue-event-publisher';
-import { SqlWalletRepository, WalletRow } from './infrastructure/sql-wallet.repository';
+import { SqlWalletRepository, TransactionRow, WalletRow } from './infrastructure/sql-wallet.repository';
 
 @Module({
   imports: [
@@ -21,13 +23,13 @@ import { SqlWalletRepository, WalletRow } from './infrastructure/sql-wallet.repo
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME ?? 'carteira',
       options: { encrypt: true, trustServerCertificate: process.env.DB_TRUST_CERT === 'true' },
-      entities: [WalletRow],
+      entities: [WalletRow, TransactionRow],
       // shortcut: creates the tables by itself; switch to migrations before real data
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([WalletRow]),
+    TypeOrmModule.forFeature([WalletRow, TransactionRow]),
   ],
-  controllers: [CreateWalletController, ListWalletsController, GetWalletController],
+  controllers: [CreateWalletController, ListWalletsController, GetWalletController, DepositController],
   providers: [
     { provide: WalletRepository, useClass: SqlWalletRepository },
     { provide: EventPublisher, useClass: QueueEventPublisher },
@@ -46,6 +48,11 @@ import { SqlWalletRepository, WalletRow } from './infrastructure/sql-wallet.repo
       provide: GetWallet,
       useFactory: (wallets: WalletRepository) => new GetWallet(wallets),
       inject: [WalletRepository],
+    },
+    {
+      provide: Deposit,
+      useFactory: (wallets: WalletRepository, events: EventPublisher) => new Deposit(wallets, events),
+      inject: [WalletRepository, EventPublisher],
     },
   ],
 })
