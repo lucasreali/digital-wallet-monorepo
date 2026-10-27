@@ -1,0 +1,150 @@
+asyncapi: 3.0.0
+info:
+  title: Carteira Digital - Events
+  version: 1.0.0
+  description: |
+    Domain events of the digital wallet. svc-identidade and svc-carteira publish them to the Azure Storage Queue
+    `wallet-events` after a state change succeeds; the fn-notificacoes queue trigger consumes them, stores them in
+    Table Storage (`events`) and uses them for the financial score (`GET /api/insights`) and the activity feed
+    (`GET /api/activity`). Each message body is the JSON envelope below, base64-encoded.
+    Preview: paste this file into https://studio.asyncapi.com.
+
+servers:
+  azure:
+    host: '{account}.queue.core.windows.net'
+    protocol: https
+    description: Azure Storage Queue (connection string in AZURE_STORAGE_CONNECTION_STRING)
+    variables:
+      account:
+        description: Storage account name
+  local:
+    host: localhost:10001
+    protocol: http
+    description: Azurite emulator (`docker compose up azurite`)
+
+channels:
+  walletEvents:
+    address: wallet-events
+    description: Single queue carrying every wallet event; the envelope `type` tells them apart.
+    messages:
+      UserCreated: { $ref: '#/components/messages/UserCreated' }
+      WalletOpened: { $ref: '#/components/messages/WalletOpened' }
+      Deposit: { $ref: '#/components/messages/Deposit' }
+      Withdrawal: { $ref: '#/components/messages/Withdrawal' }
+      WalletClosed: { $ref: '#/components/messages/WalletClosed' }
+
+operations:
+  publishIdentityEvents:
+    action: send
+    summary: svc-identidade publishes when a user is created
+    channel: { $ref: '#/channels/walletEvents' }
+    messages:
+      - $ref: '#/channels/walletEvents/messages/UserCreated'
+  publishWalletEvents:
+    action: send
+    summary: svc-carteira publishes when a wallet is opened, moved or closed
+    channel: { $ref: '#/channels/walletEvents' }
+    messages:
+      - $ref: '#/channels/walletEvents/messages/WalletOpened'
+      - $ref: '#/channels/walletEvents/messages/Deposit'
+      - $ref: '#/channels/walletEvents/messages/Withdrawal'
+      - $ref: '#/channels/walletEvents/messages/WalletClosed'
+  consumeWalletEvents:
+    action: receive
+    summary: fn-notificacoes queue trigger stores every event for insights and activity
+    channel: { $ref: '#/channels/walletEvents' }
+
+components:
+  messages:
+    UserCreated:
+      summary: A user was created in svc-identidade
+      contentType: application/json
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type: { const: UserCreated }
+              data:
+                type: object
+                required: [userId, name, email]
+                properties:
+                  userId: { type: string }
+                  name: { type: string }
+                  email: { type: string, format: email }
+      examples:
+        - payload:
+            id: 6f1c2a9e-0d4b-4a51-9a53-3f7f1c1b2a10
+            type: UserCreated
+            occurredAt: '2026-10-26T12:00:00.000Z'
+            data: { userId: 671c0f1e2a3b4c5d6e7f8091, name: Ana Souza, email: ana@example.com }
+    WalletOpened:
+      summary: A wallet was opened in svc-carteira
+      contentType: application/json
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type: { const: WalletOpened }
+              data: { $ref: '#/components/schemas/WalletRef' }
+    Deposit:
+      summary: Money was deposited into a wallet
+      contentType: application/json
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type: { const: Deposit }
+              data: { $ref: '#/components/schemas/Movement' }
+      examples:
+        - payload:
+            id: 0b7e4c2d-6a1f-4f3e-8d2c-1a2b3c4d5e6f
+            type: Deposit
+            occurredAt: '2026-10-26T12:05:00.000Z'
+            data: { walletId: 9d1f6b2e-1c3a-4e5f-8a9b-0c1d2e3f4a5b, ownerId: 671c0f1e2a3b4c5d6e7f8091, amount: 150, balance: 150 }
+    Withdrawal:
+      summary: Money was withdrawn from a wallet
+      contentType: application/json
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type: { const: Withdrawal }
+              data: { $ref: '#/components/schemas/Movement' }
+    WalletClosed:
+      summary: A wallet with zero balance was closed
+      contentType: application/json
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type: { const: WalletClosed }
+              data: { $ref: '#/components/schemas/WalletRef' }
+
+  schemas:
+    Envelope:
+      type: object
+      required: [id, type, occurredAt, data]
+      properties:
+        id: { type: string, format: uuid, description: Unique event id (consumers dedupe on it) }
+        type: { type: string, enum: [UserCreated, WalletOpened, Deposit, Withdrawal, WalletClosed] }
+        occurredAt: { type: string, format: date-time }
+        data: { type: object }
+    WalletRef:
+      type: object
+      required: [walletId, ownerId]
+      properties:
+        walletId: { type: string }
+        ownerId: { type: string, description: User id from svc-identidade }
+    Movement:
+      type: object
+      required: [walletId, ownerId, amount, balance]
+      properties:
+        walletId: { type: string }
+        ownerId: { type: string }
+        amount: { type: number, exclusiveMinimum: 0 }
+        balance: { type: number, minimum: 0, description: Wallet balance after the movement }
