@@ -10,7 +10,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
   app.useGlobalFilters(new DomainErrorFilter(app.getHttpAdapter()));
 
-  // O plugin do @nestjs/swagger (nest-cli.json) lê DTOs e tipos de retorno direto do código
+  // The @nestjs/swagger plugin (nest-cli.json) reads DTOs and return types straight from the code
   const config = new DocumentBuilder().setTitle('svc-identidade').setVersion('1.0').build();
   SwaggerModule.setup('docs', app, () => SwaggerModule.createDocument(app, config));
 
