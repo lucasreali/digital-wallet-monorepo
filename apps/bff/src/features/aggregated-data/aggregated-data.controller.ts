@@ -1,5 +1,5 @@
 import { BadGatewayException, Controller, Get } from '@nestjs/common';
-import type { AggregatedDataDto } from './aggregated-data.dto';
+import { AggregatedDataDto } from './aggregated-data.dto';
 
 const IDENTIDADE = process.env.SVC_IDENTIDADE_URL ?? 'http://localhost:3001';
 const CARTEIRA = process.env.SVC_CARTEIRA_URL ?? 'http://localhost:3002';

@@ -20,5 +20,11 @@
   },
   "linter": { "rules": { "preset": "recommended" } },
   "assist": { "actions": { "source": { "organizeImports": "on" } } },
-  "overrides": [{ "includes": ["apps/web/**"], "javascript": { "formatter": { "semicolons": "asNeeded" } } }]
+  "overrides": [
+    { "includes": ["apps/web/**"], "javascript": { "formatter": { "semicolons": "asNeeded" } } },
+    {
+      "includes": ["apps/bff/**"],
+      "linter": { "rules": { "style": { "useImportType": "off" } } }
+    }
+  ]
 }
