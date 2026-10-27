@@ -10,6 +10,8 @@ import { GetWalletController } from './features/get-wallet/get-wallet.controller
 import { GetWallet } from './features/get-wallet/get-wallet.use-case';
 import { ListWalletsController } from './features/list-wallets/list-wallets.controller';
 import { ListWallets } from './features/list-wallets/list-wallets.use-case';
+import { WithdrawController } from './features/withdraw/withdraw.controller';
+import { Withdraw } from './features/withdraw/withdraw.use-case';
 import { QueueEventPublisher } from './infrastructure/queue-event-publisher';
 import { SqlWalletRepository, TransactionRow, WalletRow } from './infrastructure/sql-wallet.repository';
 
@@ -29,7 +31,13 @@ import { SqlWalletRepository, TransactionRow, WalletRow } from './infrastructure
     }),
     TypeOrmModule.forFeature([WalletRow, TransactionRow]),
   ],
-  controllers: [CreateWalletController, ListWalletsController, GetWalletController, DepositController],
+  controllers: [
+    CreateWalletController,
+    ListWalletsController,
+    GetWalletController,
+    DepositController,
+    WithdrawController,
+  ],
   providers: [
     { provide: WalletRepository, useClass: SqlWalletRepository },
     { provide: EventPublisher, useClass: QueueEventPublisher },
@@ -52,6 +60,11 @@ import { SqlWalletRepository, TransactionRow, WalletRow } from './infrastructure
     {
       provide: Deposit,
       useFactory: (wallets: WalletRepository, events: EventPublisher) => new Deposit(wallets, events),
+      inject: [WalletRepository, EventPublisher],
+    },
+    {
+      provide: Withdraw,
+      useFactory: (wallets: WalletRepository, events: EventPublisher) => new Withdraw(wallets, events),
       inject: [WalletRepository, EventPublisher],
     },
   ],
