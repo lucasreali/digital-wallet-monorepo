@@ -29,7 +29,8 @@ export class TransactionRow {
   @Column({ length: 10 }) type: 'deposit' | 'withdrawal';
   @Column('decimal', { precision: 19, scale: 2 }) amount: number;
   @Column('decimal', { precision: 19, scale: 2 }) balanceAfter: number;
-  @CreateDateColumn() createdAt: Date;
+  // datetimeoffset keeps the UTC offset; datetime2 was read back as local time and shifted the timestamps
+  @CreateDateColumn({ type: 'datetimeoffset' }) createdAt: Date;
 }
 
 @Injectable()
