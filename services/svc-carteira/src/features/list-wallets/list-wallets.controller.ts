@@ -1,12 +1,13 @@
-// biome-ignore-all lint/style/useImportType: Nest needs the runtime classes for DI and validation metadata
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Inject, Query } from '@nestjs/common';
 import type { Wallet } from '../../domain/wallet.entity';
+// biome-ignore lint/style/useImportType: ValidationPipe and Swagger read the DTO class at runtime
 import { ListWalletsQuery } from './list-wallets.dto';
 import { ListWallets } from './list-wallets.use-case';
 
 @Controller('wallets')
 export class ListWalletsController {
-  constructor(private readonly listWallets: ListWallets) {}
+  // Explicit token: the use case has no @Injectable() and type-only imports erase its metadata
+  constructor(@Inject(ListWallets) private readonly listWallets: ListWallets) {}
 
   /** Lists every wallet, optionally filtered by owner */
   @Get()
