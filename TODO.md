@@ -70,10 +70,10 @@ Build every screen from `docs/prototype.html`, using only the generated hooks (t
 
 ## 7. Architecture and quality
 
-- [ ] `architecture.spec.ts` in every backend package covers every layer and folder that exists
-- [ ] No controller depends on a repository; no slice imports another slice
-- [ ] Code, comments and messages in English (translate the Portuguese ones)
-- [ ] `pnpm test`, `pnpm check` and every package `build` pass
+- [x] `architecture.spec.ts` in every backend package covers every layer and folder that exists
+- [x] No controller depends on a repository; no slice imports another slice
+- [x] Code, comments and messages in English (translate the Portuguese ones)
+- [x] `pnpm test`, `pnpm check` and every package `build` pass
 
 ## 8. Cloud deploy (public URLs for the video)
 
