@@ -36,6 +36,12 @@ export class MongoUserRepository extends UserRepository {
     const doc = await this.users.findById(id);
     return doc && toDomain(doc);
   }
+
+  async update(id: string, data: Partial<Omit<User, 'id'>>): Promise<User | null> {
+    if (!isValidObjectId(id)) return null;
+    const doc = await this.users.findByIdAndUpdate(id, data, { returnDocument: 'after' });
+    return doc && toDomain(doc);
+  }
 }
 
 const toDomain = (doc: HydratedDocument<UserDocument>): User => ({ id: doc.id, name: doc.name, email: doc.email });

@@ -23,4 +23,9 @@ export class InMemoryUserRepository extends UserRepository {
   async findById(id: string): Promise<User | null> {
     return this.users.find((u) => u.id === id) ?? null;
   }
+
+  async update(id: string, data: Partial<Omit<User, 'id'>>): Promise<User | null> {
+    const user = this.users.find((u) => u.id === id);
+    return user ? Object.assign(user, data) : null;
+  }
 }
