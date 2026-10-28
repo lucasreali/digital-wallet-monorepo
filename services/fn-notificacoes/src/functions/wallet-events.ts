@@ -2,10 +2,10 @@ import { app } from '@azure/functions';
 import { saveEvent } from '../event-store';
 import { parseEvent } from '../events';
 
-// Message trigger: consumes the events published by svc-identidade and svc-carteira
-app.storageQueue('walletEvents', {
+// Message trigger: consumes the events published by svc-identidade and svc-carteira (Azure Service Bus queue)
+app.serviceBusQueue('walletEvents', {
   queueName: 'wallet-events',
-  connection: 'AZURE_STORAGE_CONNECTION_STRING',
+  connection: 'ServiceBusConnection',
   handler: async (message, context) => {
     const event = parseEvent(message);
     await saveEvent(event);

@@ -6,7 +6,7 @@
 
 | Função | Gatilho | Descrição |
 |---|---|---|
-| `wallet-events` | Fila (Storage Queue `wallet-events`) | Recebe cada evento publicado pelos microsserviços e grava na tabela `events` (Table Storage) |
+| `wallet-events` | Fila (Service Bus `wallet-events`) | Recebe cada evento publicado pelos microsserviços e grava na tabela `events` (Table Storage) |
 | `insights` | HTTP `GET /api/insights?ownerId=` | Score financeiro de 0 a 1000: proporção de depósitos sobre o total movimentado (500 sem movimentação) |
 | `activity` | HTTP `GET /api/activity?limit=` | Feed de atividade: os eventos mais recentes primeiro |
 
