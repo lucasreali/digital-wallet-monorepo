@@ -3,24 +3,20 @@ info:
   title: Carteira Digital - Events
   version: 1.0.0
   description: |
-    Domain events of the digital wallet. svc-identidade and svc-carteira publish them to the Azure Storage Queue
-    `wallet-events` after a state change succeeds; the fn-notificacoes queue trigger consumes them, stores them in
+    Domain events of the digital wallet. svc-identidade and svc-carteira publish them to the Azure Service Bus queue
+    `wallet-events` after a state change succeeds; the fn-notificacoes Service Bus trigger consumes them, stores them in
     Table Storage (`events`) and uses them for the financial score (`GET /api/insights`) and the activity feed
-    (`GET /api/activity`). Each message body is the JSON envelope below, base64-encoded.
+    (`GET /api/activity`). Each message body is the JSON envelope below (content type application/json).
     Preview: paste this file into https://studio.asyncapi.com.
 
 servers:
   azure:
-    host: '{account}.queue.core.windows.net'
-    protocol: https
-    description: Azure Storage Queue (connection string in AZURE_STORAGE_CONNECTION_STRING)
+    host: '{namespace}.servicebus.windows.net'
+    protocol: amqps
+    description: Azure Service Bus (connection string in SERVICEBUS_CONNECTION_STRING)
     variables:
-      account:
-        description: Storage account name
-  local:
-    host: localhost:10001
-    protocol: http
-    description: Azurite emulator (`docker compose up azurite`)
+      namespace:
+        description: Service Bus namespace name
 
 channels:
   walletEvents:
