@@ -28,7 +28,7 @@ function Dashboard() {
     { name: 'Identidade', tech: 'MongoDB', icon: 'users', ok: !!data },
     { name: 'Carteira', tech: 'Azure SQL', icon: 'database', ok: !!data },
     { name: 'Insights', tech: 'Azure Function', icon: 'zap', ok: !!data },
-    { name: 'Eventos', tech: 'Storage Queue', icon: 'activity', ok: !!activity.data },
+    { name: 'Eventos', tech: 'Service Bus', icon: 'activity', ok: !!activity.data },
   ]
   const refreshing = aggregated.isFetching || activity.isFetching
 

@@ -85,7 +85,7 @@ const components: { name: string; tech: string; role: string; swagger?: string }
   },
   {
     name: 'Barramento de eventos',
-    tech: 'Azure Storage Queue',
+    tech: 'Azure Service Bus',
     role: 'Transporta os eventos dos serviços até a Function e alimenta o feed de Atividade.',
   },
 ]
