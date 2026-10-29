@@ -1062,6 +1062,10 @@ dialog.sheet {
   padding: 0;
   color: var(--text);
 }
+/* .dialog/.sheet set display: flex, which would otherwise show a closed native <dialog> */
+dialog:not([open]) {
+  display: none;
+}
 dialog.sheet {
   margin: 0 0 0 auto;
   height: 100vh;
