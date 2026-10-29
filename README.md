@@ -14,8 +14,8 @@ Projeto PJBL da disciplina **Arquitetura de Soluções com Cloud** (PUCPR), Entr
 | Swagger — svc-identidade (MongoDB) | https://svc-identidade.wonderfuldune-fe1dc2f4.canadacentral.azurecontainerapps.io/docs |
 | Swagger — svc-carteira (Azure SQL) | https://svc-carteira.wonderfuldune-fe1dc2f4.canadacentral.azurecontainerapps.io/docs |
 | Azure Function (score) | https://func-pjbl-cd-fpfbg6c3axgwh5b2.canadacentral-01.azurewebsites.net/api/insights |
-| Swagger — Eventos (AsyncAPI) | _a preencher_ ([fonte](docs/events/asyncapi.yaml)) |
-| Docker Hub | _a preencher_ |
+| Swagger — Eventos (AsyncAPI) | https://github.com/lucasreali/digital-wallet-monorepo/blob/main/docs/events/asyncapi.yaml (visualizar colando em https://studio.asyncapi.com) |
+| Docker Hub | https://hub.docker.com/u/f4d3l |
 | GitHub | https://github.com/lucasreali/digital-wallet-monorepo |
 | Vídeo (YouTube, não listado) | _a preencher_ |
 | Documentação arc42 (PDF) | [docs/Carteira-Digital-Arquitetura-arc42-1.pdf](docs/Carteira-Digital-Arquitetura-arc42-1.pdf) |
@@ -128,13 +128,28 @@ pnpm --filter web generate    # gera apps/web/src/gen
 
 ## Docker Hub
 
+Imagens publicadas em https://hub.docker.com/u/f4d3l. Tags em uso no Azure Container Apps:
+
+| Imagem | Tag | Componente |
+|---|---|---|
+| [`f4d3l/carteira-web`](https://hub.docker.com/r/f4d3l/carteira-web) | `v4` | Frontend (build com a URL do API Gateway) |
+| [`f4d3l/carteira-bff`](https://hub.docker.com/r/f4d3l/carteira-bff) | `v1` | BFF |
+| [`f4d3l/carteira-svc-identidade`](https://hub.docker.com/r/f4d3l/carteira-svc-identidade) | `v2` | Microsserviço 1 (MongoDB) |
+| [`f4d3l/carteira-svc-carteira`](https://hub.docker.com/r/f4d3l/carteira-svc-carteira) | `v2` | Microsserviço 2 (Azure SQL) |
+| [`f4d3l/carteira-fn-notificacoes`](https://hub.docker.com/r/f4d3l/carteira-fn-notificacoes) | `v2` | Azure Function (imagem de referência; na nuvem roda no Azure Functions) |
+
+Build e publicação, a partir da raiz do repositório:
+
 ```bash
-docker build -f Dockerfile.nest --build-arg APP=bff -t <user>/carteira-bff:v1 .
-docker build -f Dockerfile.nest --build-arg APP=svc-identidade -t <user>/carteira-svc-identidade:v1 .
-docker build -f Dockerfile.nest --build-arg APP=svc-carteira -t <user>/carteira-svc-carteira:v1 .
-docker build -f services/fn-notificacoes/Dockerfile -t <user>/carteira-fn-notificacoes:v1 .
-docker push <user>/carteira-<imagem>:v1
+docker build -f Dockerfile.nest --build-arg APP=bff -t f4d3l/carteira-bff:<tag> .
+docker build -f Dockerfile.nest --build-arg APP=svc-identidade -t f4d3l/carteira-svc-identidade:<tag> .
+docker build -f Dockerfile.nest --build-arg APP=svc-carteira -t f4d3l/carteira-svc-carteira:<tag> .
+docker build -f services/fn-notificacoes/Dockerfile -t f4d3l/carteira-fn-notificacoes:<tag> .
+docker build -f apps/web/Dockerfile --build-arg VITE_BFF_URL=https://i12uxusdx6.execute-api.us-east-1.amazonaws.com -t f4d3l/carteira-web:<tag> .
+docker push f4d3l/carteira-<imagem>:<tag>
 ```
+
+A URL da API do frontend (`VITE_BFF_URL`) é embutida no build: trocar o API Gateway exige gerar uma nova imagem do `web`. Para publicar uma nova versão, gere a imagem com uma tag nova, faça o push e troque a tag no app em Contêineres → Editar e implantar.
 
 Todas as configurações (URLs, conexões, senhas) vêm de variáveis de ambiente; nenhum segredo fica no repositório.
 
@@ -143,6 +158,6 @@ Todas as configurações (URLs, conexões, senhas) vêm de variáveis de ambient
 | Nome | RA / Matrícula |
 |---|---|
 | Lucas Reali | 40092691 |
-| Guilherme Falde | 40101681 |
+| Guilherme Fadel | 40101681 |
 | Thiago Akimoto | 40090610 |
 | Gabriel Conti | 40095589 |
