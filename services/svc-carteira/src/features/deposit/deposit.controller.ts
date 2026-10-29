@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Param, Post } from '@nestjs/common';
 import type { Wallet } from '../../domain/wallet.entity';
 import { DepositDto } from './deposit.dto';
 import { Deposit } from './deposit.use-case';
@@ -10,7 +10,7 @@ export class DepositController {
   /** Adds money to a wallet and records the transaction; 404 unknown wallet, 422 invalid amount */
   @Post(':id/deposit')
   @HttpCode(200)
-  create(@Param('id', ParseUUIDPipe) id: string, @Body() dto: DepositDto): Promise<Wallet> {
+  create(@Param('id') id: string, @Body() dto: DepositDto): Promise<Wallet> {
     return this.deposit.execute({ walletId: id, amount: dto.amount });
   }
 }

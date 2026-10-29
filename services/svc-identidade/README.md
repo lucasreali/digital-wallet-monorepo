@@ -21,8 +21,8 @@ Clean Architecture + Vertical Slice: `domain/` (entidade, portas e erros), `feat
 ## Rodando localmente
 
 ```bash
-docker compose up mongo-identidade azurite
-PORT=3001 AZURE_STORAGE_CONNECTION_STRING=UseDevelopmentStorage=true pnpm --filter svc-identidade dev
+docker compose up mongo-identidade
+PORT=3001 SERVICEBUS_CONNECTION_STRING='<connection string>' pnpm --filter svc-identidade dev
 ```
 
-Variáveis: `MONGO_URL` (padrão `mongodb://localhost:27017/identidade`), `SVC_CARTEIRA_URL` (padrão `http://localhost:3002`), `AZURE_STORAGE_CONNECTION_STRING` (sem ela, os eventos não são publicados).
+Variáveis: `MONGO_URL` (padrão `mongodb://localhost:27017/identidade`), `SVC_CARTEIRA_URL` (padrão `http://localhost:3002`), `SERVICEBUS_CONNECTION_STRING` (Azure Service Bus; sem ela, os eventos não são publicados).

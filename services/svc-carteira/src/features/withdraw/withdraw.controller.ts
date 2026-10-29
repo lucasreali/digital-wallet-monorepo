@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Param, Post } from '@nestjs/common';
 import type { Wallet } from '../../domain/wallet.entity';
 import { WithdrawDto } from './withdraw.dto';
 import { Withdraw } from './withdraw.use-case';
@@ -10,7 +10,7 @@ export class WithdrawController {
   /** Takes money out of a wallet and records the transaction; 404 unknown wallet, 422 invalid amount or insufficient funds */
   @Post(':id/withdraw')
   @HttpCode(200)
-  create(@Param('id', ParseUUIDPipe) id: string, @Body() dto: WithdrawDto): Promise<Wallet> {
+  create(@Param('id') id: string, @Body() dto: WithdrawDto): Promise<Wallet> {
     return this.withdraw.execute({ walletId: id, amount: dto.amount });
   }
 }
