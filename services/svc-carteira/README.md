@@ -23,8 +23,8 @@ Clean Architecture + Vertical Slice: as regras de saldo ficam no domínio (`doma
 ## Rodando localmente
 
 ```bash
-docker compose up sql-carteira sql-carteira-init azurite
-PORT=3002 DB_PASSWORD='Carteira@Local123' DB_TRUST_CERT=true AZURE_STORAGE_CONNECTION_STRING=UseDevelopmentStorage=true pnpm --filter svc-carteira dev
+docker compose up sql-carteira sql-carteira-init
+PORT=3002 DB_PASSWORD='Carteira@Local123' DB_TRUST_CERT=true SERVICEBUS_CONNECTION_STRING='<connection string>' pnpm --filter svc-carteira dev
 ```
 
-Variáveis: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DB_TRUST_CERT`, `AZURE_STORAGE_CONNECTION_STRING`.
+Variáveis: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DB_TRUST_CERT`, `SERVICEBUS_CONNECTION_STRING` (Azure Service Bus; sem ela, os eventos não são publicados).

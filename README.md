@@ -31,7 +31,7 @@ flowchart LR
   B --> F[fn-notificacoes<br/>Azure Function HTTP]
   I --> M[(MongoDB Atlas)]
   C --> S[(Azure SQL)]
-  I -- UserCreated --> Q[[Storage Queue<br/>wallet-events]]
+  I -- UserCreated --> Q[[Service Bus<br/>wallet-events]]
   C -- WalletOpened / Deposit /<br/>Withdrawal / WalletClosed --> Q
   Q --> FT[fn-notificacoes<br/>Queue Trigger]
   FT --> T[(Table Storage)]
@@ -46,7 +46,7 @@ flowchart LR
 | 4 | Microsserviço 2 | [`services/svc-carteira`](services/svc-carteira) | NestJS + TypeORM, Azure SQL | Carteiras, depósitos, saques, extrato: CRUD + regras + Swagger |
 | 5 | Azure Function | [`services/fn-notificacoes`](services/fn-notificacoes) | Azure Functions v4 (Node) | Queue Trigger que consome os eventos; HTTP para score (`/api/insights`) e feed (`/api/activity`) |
 | 6 | API Gateway | — | AWS API Gateway | Entrada única, roteamento e segurança na frente do BFF |
-| 7 | Mensageria | — | Azure Storage Queue (Azurite local) | Fila `wallet-events` com os eventos de domínio |
+| 7 | Mensageria | — | Azure Service Bus | Fila `wallet-events` com os eventos de domínio |
 
 Cada pasta tem seu próprio README explicando o componente.
 

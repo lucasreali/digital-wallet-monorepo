@@ -10,8 +10,8 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-Carteira@Local123}
       DB_NAME: ${DB_NAME:-carteira}
       DB_TRUST_CERT: ${DB_TRUST_CERT:-true}
-      # Event broker; the default is the Azurite emulator from services/fn-notificacoes/docker-compose.yml
-      AZURE_STORAGE_CONNECTION_STRING: ${AZURE_STORAGE_CONNECTION_STRING:-DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;}
+      # Event broker: Azure Service Bus queue `wallet-events`; empty skips publishing
+      SERVICEBUS_CONNECTION_STRING: ${SERVICEBUS_CONNECTION_STRING:-}
     ports:
       - "3002:3000"
     depends_on:
