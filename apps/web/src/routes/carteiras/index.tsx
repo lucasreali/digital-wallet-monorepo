@@ -1,9 +1,11 @@
+import { Button } from '@base-ui/react/button'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useState } from 'react'
 import { columnHelper, DataTable } from '#/components/DataTable'
 import { Icon } from '#/components/Icon'
 import { PageHeader } from '#/components/layout/PageHeader'
 import { EmptyState, ErrorState, ListSkeleton } from '#/components/states'
+import { Tip } from '#/components/Tip'
 import { CloseWalletDialog, OpenWalletButton } from '#/features/wallets'
 import { useListUsers, useListWallets } from '#/gen/hooks'
 import { apiErrorMessage } from '#/lib/api-error'
@@ -64,28 +66,32 @@ function Wallets() {
         const zero = row.original.balance === 0
         return (
           <div className="actions">
-            <Link
-              className="icon-btn"
-              to="/carteiras/$walletId"
-              params={{ walletId: row.original.id }}
-              aria-label={`Ver carteira de ${row.original.name}`}
-            >
-              <Icon name="eye" />
-            </Link>
-            <button
-              className={`icon-btn ${zero ? 'danger' : ''}`}
-              type="button"
-              disabled={!zero}
-              title={zero ? undefined : 'Zere o saldo para encerrar'}
-              aria-label={
-                zero
-                  ? `Encerrar carteira de ${row.original.name}`
-                  : `Encerrar indisponível: zere o saldo de ${row.original.name} antes`
-              }
-              onClick={() => setClosing(row.original)}
-            >
-              <Icon name={zero ? 'xCircle' : 'lock'} />
-            </button>
+            <Tip label="Ver detalhes">
+              <Link
+                className="icon-btn"
+                to="/carteiras/$walletId"
+                params={{ walletId: row.original.id }}
+                aria-label={`Ver carteira de ${row.original.name}`}
+              >
+                <Icon name="eye" />
+              </Link>
+            </Tip>
+            {/* focusableWhenDisabled keeps the reason reachable by hover and keyboard */}
+            <Tip label={zero ? 'Encerrar' : 'Zere o saldo para encerrar'}>
+              <Button
+                className={`icon-btn ${zero ? 'danger' : ''}`}
+                disabled={!zero}
+                focusableWhenDisabled
+                aria-label={
+                  zero
+                    ? `Encerrar carteira de ${row.original.name}`
+                    : `Encerrar indisponível: zere o saldo de ${row.original.name} antes`
+                }
+                onClick={() => setClosing(row.original)}
+              >
+                <Icon name={zero ? 'xCircle' : 'lock'} />
+              </Button>
+            </Tip>
           </div>
         )
       },

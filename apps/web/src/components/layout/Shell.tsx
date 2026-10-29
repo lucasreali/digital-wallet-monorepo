@@ -1,3 +1,6 @@
+import { Toggle } from '@base-ui/react/toggle'
+import { ToggleGroup } from '@base-ui/react/toggle-group'
+import { Tooltip } from '@base-ui/react/tooltip'
 import { Link } from '@tanstack/react-router'
 import { createContext, type ReactNode, useContext, useEffect, useState } from 'react'
 import { Icon, type IconName } from '#/components/Icon'
@@ -41,13 +44,15 @@ export function Shell({ children }: { children: ReactNode }) {
   return (
     <ThemeContext.Provider value={{ dark, setDark }}>
       <ToastProvider>
-        <div className="shell">
-          <div className="side-slot">
-            <Sidebar />
+        <Tooltip.Provider delay={300}>
+          <div className="shell">
+            <div className="side-slot">
+              <Sidebar />
+            </div>
+            <main className="main">{children}</main>
+            <BottomNav />
           </div>
-          <main className="main">{children}</main>
-          <BottomNav />
-        </div>
+        </Tooltip.Provider>
       </ToastProvider>
     </ThemeContext.Provider>
   )
@@ -93,31 +98,26 @@ function Sidebar() {
           ))}
         </div>
       </div>
-      <fieldset style={{ border: 0, margin: 0, padding: 0, minWidth: 0 }}>
-        <legend className="eyebrow px-1" style={{ marginBottom: 10 }}>
+      <div>
+        <span className="eyebrow block px-1" id="theme-label" style={{ marginBottom: 10 }}>
           Tema
-        </legend>
-        <div className="seg">
-          <button
-            className={`seg-b ${dark ? '' : 'on'}`}
-            type="button"
-            aria-pressed={!dark}
-            onClick={() => setDark(false)}
-          >
+        </span>
+        <ToggleGroup
+          className="seg"
+          aria-labelledby="theme-label"
+          value={[dark ? 'dark' : 'light']}
+          onValueChange={([theme]) => theme && setDark(theme === 'dark')}
+        >
+          <Toggle className="seg-b" value="light">
             <Icon name="sun" size="sm" />
             Claro
-          </button>
-          <button
-            className={`seg-b ${dark ? 'on' : ''}`}
-            type="button"
-            aria-pressed={dark}
-            onClick={() => setDark(true)}
-          >
+          </Toggle>
+          <Toggle className="seg-b" value="dark">
             <Icon name="moon" size="sm" />
             Escuro
-          </button>
-        </div>
-      </fieldset>
+          </Toggle>
+        </ToggleGroup>
+      </div>
     </nav>
   )
 }

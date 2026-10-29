@@ -1,24 +1,35 @@
+import { Combobox } from '@base-ui/react/combobox'
+import { Field } from '@base-ui/react/field'
 import { useForm } from '@tanstack/react-form'
-import { useEffect, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import { z } from 'zod'
 import { AlertError, Dialog, DialogActions } from '#/components/Dialog'
 import { Icon } from '#/components/Icon'
 import { brl, initials, parseMoney } from '#/lib/format'
 import type { User } from '#/lib/types'
 
-/** First validation message of a field, shown once the field was touched (or a submit was attempted). */
-function FieldError({ id, meta }: { id: string; meta: { isTouched: boolean; errors: unknown[] } }) {
+/** First validation message of a field, once the field was touched (or a submit was attempted). */
+function firstError(meta: { isTouched: boolean; errors: unknown[] }) {
   const first = meta.errors[0] as { message?: string } | string | undefined
-  const message = typeof first === 'string' ? first : first?.message
-  if (!meta.isTouched || !message) return null
-  return <ErrorMsg id={id}>{message}</ErrorMsg>
+  return meta.isTouched ? (typeof first === 'string' ? first : first?.message) : undefined
 }
 
-const ErrorMsg = ({ id, children }: { id: string; children: string }) => (
-  <span className="error-msg" id={id}>
-    <Icon name="alertCircle" size="xs" />
-    {children}
-  </span>
+/** Field error wired to the control by Base UI Field (aria-describedby). */
+const ErrorMsg = ({ children }: { children?: string }) =>
+  children ? (
+    <Field.Error className="error-msg" match>
+      <Icon name="alertCircle" size="xs" />
+      {children}
+    </Field.Error>
+  ) : null
+
+const Label = ({ children }: { children: ReactNode }) => (
+  <Field.Label className="label">
+    {children}{' '}
+    <span className="req" aria-hidden="true">
+      *
+    </span>
+  </Field.Label>
 )
 
 const isConflict = (error?: string) => error?.startsWith('409')
@@ -76,53 +87,37 @@ export function UserFormDialog({ open, onClose, user, onSubmit, pending, error }
       }
     >
       <form.Field name="name">
-        {(field) => (
-          <div className="field">
-            <label className="label" htmlFor="user-name">
-              Nome{' '}
-              <span className="req" aria-hidden="true">
-                *
-              </span>
-            </label>
-            <input
-              className={`input ${field.state.meta.isTouched && field.state.meta.errors.length ? 'is-error' : ''}`}
-              id="user-name"
-              value={field.state.value}
-              onChange={(e) => field.handleChange(e.target.value)}
-              onBlur={field.handleBlur}
-              disabled={pending}
-              aria-invalid={field.state.meta.isTouched && field.state.meta.errors.length > 0}
-              aria-describedby="user-name-error"
-            />
-            <FieldError id="user-name-error" meta={field.state.meta} />
-          </div>
-        )}
+        {(field) => {
+          const message = firstError(field.state.meta)
+          return (
+            <Field.Root className="field" invalid={!!message} disabled={pending}>
+              <Label>Nome</Label>
+              <Field.Control
+                className="input"
+                value={field.state.value}
+                onValueChange={field.handleChange}
+                onBlur={field.handleBlur}
+              />
+              <ErrorMsg>{message}</ErrorMsg>
+            </Field.Root>
+          )
+        }}
       </form.Field>
       <form.Field name="email">
         {(field) => {
-          const invalid = (field.state.meta.isTouched && field.state.meta.errors.length > 0) || conflict
+          const message = firstError(field.state.meta) ?? (conflict ? error : undefined)
           return (
-            <div className="field">
-              <label className="label" htmlFor="user-email">
-                E-mail{' '}
-                <span className="req" aria-hidden="true">
-                  *
-                </span>
-              </label>
-              <input
-                className={`input ${invalid ? 'is-error' : ''}`}
-                id="user-email"
+            <Field.Root className="field" invalid={!!message} disabled={pending}>
+              <Label>E-mail</Label>
+              <Field.Control
+                className="input"
                 type="email"
                 value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
+                onValueChange={field.handleChange}
                 onBlur={field.handleBlur}
-                disabled={pending}
-                aria-invalid={invalid}
-                aria-describedby="user-email-error"
               />
-              <FieldError id="user-email-error" meta={field.state.meta} />
-              {conflict && error && <ErrorMsg id="user-email-error">{error}</ErrorMsg>}
-            </div>
+              <ErrorMsg>{message}</ErrorMsg>
+            </Field.Root>
           )
         }}
       </form.Field>
@@ -175,70 +170,57 @@ export function OpenWalletDialog({ open, onClose, candidates, onSubmit, pending,
       footer={<DialogActions onCancel={onClose} label="Abrir carteira" pendingLabel="Abrindo…" pending={pending} />}
     >
       <form.Field name="ownerId">
-        {(field) => (
-          <div className="field">
-            <label className="label" htmlFor="owner-search">
-              Titular{' '}
-              <span className="req" aria-hidden="true">
-                *
-              </span>
-            </label>
-            <div className="input-wrap">
-              <Icon name="search" size="sm" />
-              <input
-                className={`input ${field.state.meta.errors.length || conflict ? 'is-error' : ''}`}
-                id="owner-search"
-                role="combobox"
-                aria-expanded="true"
-                aria-controls="owner-list"
-                placeholder="Buscar por nome ou e-mail"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                autoComplete="off"
-              />
-            </div>
-            <div className="listbox" id="owner-list" role="listbox" aria-label="Usuários sem carteira">
-              {matches.length === 0 && (
-                <span className="muted" style={{ padding: '8px 10px', fontSize: 13 }}>
-                  {candidates.length ? 'Nenhum usuário encontrado.' : 'Todos os usuários já têm carteira.'}
-                </span>
-              )}
-              {matches.slice(0, 6).map((u) => {
-                const selected = field.state.value === u.id
-                return (
-                  <div
-                    key={u.id}
-                    className={`option ${selected ? 'on' : ''}`}
-                    role="option"
-                    aria-selected={selected}
-                    tabIndex={0}
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => field.handleChange(u.id)}
-                    onKeyDown={(e) => {
-                      if (e.key === ' ') {
-                        e.preventDefault()
-                        field.handleChange(u.id)
-                      }
-                    }}
-                  >
-                    <span className="avatar" style={{ width: 30, height: 30, fontSize: 11 }}>
-                      {initials(u.name)}
-                    </span>
-                    <span className="flex flex-1 flex-col">
-                      <span style={{ fontWeight: 700 }}>{u.name}</span>
-                      <span className="muted" style={{ fontSize: 12 }}>
-                        {u.email}
-                      </span>
-                    </span>
-                    {selected && <Icon name="check" size="sm" />}
-                  </div>
-                )
-              })}
-            </div>
-            <FieldError id="owner-error" meta={{ isTouched: true, errors: field.state.meta.errors }} />
-            {conflict && error && <ErrorMsg id="owner-error">{error}</ErrorMsg>}
-          </div>
-        )}
+        {(field) => {
+          const message =
+            firstError({ isTouched: true, errors: field.state.meta.errors }) ?? (conflict ? error : undefined)
+          return (
+            <Field.Root className="field" invalid={!!message} disabled={pending}>
+              {/* Inline list, always visible; filtering is done here so the search text stays after a pick */}
+              <Combobox.Root
+                inline
+                open
+                items={matches}
+                filter={null}
+                value={candidates.find((u) => u.id === field.state.value) ?? null}
+                onValueChange={(u) => field.handleChange(u?.id ?? '')}
+                inputValue={search}
+                onInputValueChange={(value, { reason }) => reason === 'input-change' && setSearch(value)}
+                itemToStringLabel={(u) => u.name}
+                isItemEqualToValue={(a, b) => a.id === b.id}
+              >
+                <Label>Titular</Label>
+                <div className="input-wrap">
+                  <Icon name="search" size="sm" />
+                  <Combobox.Input className="input" placeholder="Buscar por nome ou e-mail" />
+                </div>
+                <div className="listbox">
+                  <Combobox.Empty className="muted empty-opt">
+                    {candidates.length ? 'Nenhum usuário encontrado.' : 'Todos os usuários já têm carteira.'}
+                  </Combobox.Empty>
+                  <Combobox.List aria-label="Usuários sem carteira" className="options">
+                    {(u: User) => (
+                      <Combobox.Item key={u.id} value={u} className="option">
+                        <span className="avatar" style={{ width: 30, height: 30, fontSize: 11 }}>
+                          {initials(u.name)}
+                        </span>
+                        <span className="flex flex-1 flex-col">
+                          <span style={{ fontWeight: 700 }}>{u.name}</span>
+                          <span className="muted" style={{ fontSize: 12 }}>
+                            {u.email}
+                          </span>
+                        </span>
+                        <Combobox.ItemIndicator>
+                          <Icon name="check" size="sm" />
+                        </Combobox.ItemIndicator>
+                      </Combobox.Item>
+                    )}
+                  </Combobox.List>
+                </div>
+              </Combobox.Root>
+              <ErrorMsg>{message}</ErrorMsg>
+            </Field.Root>
+          )
+        }}
       </form.Field>
       <div className="alert alert-info">
         <Icon name="info" size="sm" />
@@ -331,40 +313,30 @@ export function MoneyDialog({ open, onClose, kind, ownerName, balance, onSubmit,
       </div>
       <form.Field name="amount">
         {(field) => {
-          const invalid = (field.state.meta.isTouched && field.state.meta.errors.length > 0) || !!error
+          const message = firstError(field.state.meta) ?? error
           const value = parseMoney(field.state.value)
           return (
             <>
-              <div className="field">
-                <label className="label" htmlFor="amount">
-                  Valor (R$){' '}
-                  <span className="req" aria-hidden="true">
-                    *
-                  </span>
-                </label>
+              <Field.Root className="field" invalid={!!message} disabled={pending}>
+                <Label>Valor (R$)</Label>
                 <div className="input-wrap">
-                  <span className="prefix">R$</span>
-                  <input
-                    className={`input input-money ${invalid ? 'is-error' : ''}`}
-                    id="amount"
+                  <span className="prefix" aria-hidden="true">
+                    R$
+                  </span>
+                  <Field.Control
+                    className="input input-money"
                     inputMode="decimal"
                     placeholder="0,00"
                     value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
+                    onValueChange={field.handleChange}
                     onBlur={field.handleBlur}
-                    disabled={pending}
-                    aria-invalid={invalid}
-                    aria-describedby="amount-msg"
                   />
                 </div>
-                <FieldError id="amount-msg" meta={field.state.meta} />
-                {error && <ErrorMsg id="amount-msg">{error}</ErrorMsg>}
-                {!invalid && (
-                  <span className="hint" id="amount-msg">
-                    Maior que zero, com 2 casas decimais.
-                  </span>
+                <ErrorMsg>{message}</ErrorMsg>
+                {!message && (
+                  <Field.Description className="hint">Maior que zero, com 2 casas decimais.</Field.Description>
                 )}
-              </div>
+              </Field.Root>
               {deposit && value > 0 && (
                 <div className="flex items-center justify-between">
                   <span className="muted" style={{ fontSize: 13 }}>

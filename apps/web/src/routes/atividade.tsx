@@ -1,3 +1,5 @@
+import { Toggle } from '@base-ui/react/toggle'
+import { ToggleGroup } from '@base-ui/react/toggle-group'
 import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { EventItem, eventMeta } from '#/components/EventItem'
@@ -60,24 +62,22 @@ function Activity() {
       />
       <div className="content">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <fieldset className="flex flex-wrap gap-2" style={{ border: 0, margin: 0, padding: 0 }}>
-            <legend className="sr-only">Filtrar por tipo de evento</legend>
+          <ToggleGroup
+            className="flex flex-wrap gap-2"
+            aria-label="Filtrar por tipo de evento"
+            value={[filter ?? 'all']}
+            onValueChange={([value]) => value && setFilter(value === 'all' ? undefined : (value as EventType))}
+          >
             {filters.map((f) => (
-              <button
-                key={f.label}
-                className={`chip ${filter === f.type ? 'on' : ''}`}
-                type="button"
-                aria-pressed={filter === f.type}
-                onClick={() => setFilter(f.type)}
-              >
+              <Toggle key={f.label} className="chip" value={f.type ?? 'all'}>
                 <Icon name={f.type ? eventMeta[f.type].icon : 'activity'} size="sm" />
                 {f.label}
                 <span className="num" style={{ opacity: 0.75 }}>
                   {f.type ? events.filter((e) => e.type === f.type).length : events.length}
                 </span>
-              </button>
+              </Toggle>
             ))}
-          </fieldset>
+          </ToggleGroup>
           <span className="src">
             <span className={`dot ${activity.isError ? 'dot-fail' : 'dot-ok'}`} />
             fn-notificacoes · consumidor de eventos

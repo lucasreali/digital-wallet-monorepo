@@ -1,3 +1,4 @@
+import { Field } from '@base-ui/react/field'
 import { type ReactNode, useEffect, useState } from 'react'
 import { AlertError, Dialog, DialogActions } from '#/components/Dialog'
 
@@ -56,18 +57,12 @@ export function ConfirmDialog({
       }
     >
       {confirmText && (
-        <div className="field">
-          <label className="label" htmlFor="confirm-text">
+        <Field.Root className="field">
+          <Field.Label className="label">
             Digite <span style={{ fontWeight: 800 }}>{confirmText}</span> para confirmar
-          </label>
-          <input
-            className="input"
-            id="confirm-text"
-            value={typed}
-            onChange={(e) => setTyped(e.target.value)}
-            autoComplete="off"
-          />
-        </div>
+          </Field.Label>
+          <Field.Control className="input" value={typed} onValueChange={setTyped} autoComplete="off" />
+        </Field.Root>
       )}
       <AlertError title="Não foi possível concluir" message={error} />
     </Dialog>

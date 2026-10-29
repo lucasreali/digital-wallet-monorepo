@@ -1,52 +1,47 @@
-import { createContext, type ReactNode, useCallback, useContext, useState } from 'react'
+import { Toast as BaseToast } from '@base-ui/react/toast'
+import { type ReactNode, useCallback } from 'react'
 import { Icon, type IconName } from '#/components/Icon'
 
-type Toast = { id: number; title: string; description?: ReactNode; tone?: 'in' | 'open' | 'out'; icon?: IconName }
-
-const ToastContext = createContext<(toast: Omit<Toast, 'id'>) => void>(() => {})
+type ToastData = { tone?: 'in' | 'open' | 'out'; icon?: IconName }
+type ToastInput = ToastData & { title: string; description?: ReactNode }
 
 /** Success feedback: `const toast = useToast(); toast({ title: 'Usuário cadastrado' })`. Toasts close after 5 s. */
-export const useToast = () => useContext(ToastContext)
+export function useToast() {
+  const { add } = BaseToast.useToastManager<ToastData>()
+  return useCallback(
+    ({ title, description, tone, icon }: ToastInput) => add({ title, description, data: { tone, icon } }),
+    [add],
+  )
+}
 
-let nextId = 0
-
+/** Base UI toasts: announced to screen readers, paused on hover/focus, swipe or "Fechar aviso" to dismiss. */
 export function ToastProvider({ children }: { children: ReactNode }) {
-  const [toasts, setToasts] = useState<Toast[]>([])
-  const dismiss = useCallback((id: number) => setToasts((list) => list.filter((t) => t.id !== id)), [])
-  const show = useCallback(
-    (toast: Omit<Toast, 'id'>) => {
-      const id = ++nextId
-      setToasts((list) => [...list, { ...toast, id }])
-      setTimeout(() => dismiss(id), 5000)
-    },
-    [dismiss],
-  )
-
   return (
-    <ToastContext.Provider value={show}>
+    <BaseToast.Provider timeout={5000}>
       {children}
-      <div className="toasts" aria-live="polite">
-        {toasts.map((t) => (
-          <div className="toast" role="status" key={t.id}>
-            <span className={`ev-ic t-${t.tone ?? 'in'}`} style={{ width: 32, height: 32 }}>
-              <Icon name={t.icon ?? 'check'} size="sm" />
-            </span>
-            <span className="flex flex-1 flex-col gap-0.5">
-              <span className="toast-title">{t.title}</span>
-              {t.description && <span className="toast-desc">{t.description}</span>}
-            </span>
-            <button
-              className="icon-btn"
-              type="button"
-              aria-label="Fechar aviso"
-              style={{ width: 28, height: 28 }}
-              onClick={() => dismiss(t.id)}
-            >
-              <Icon name="x" size="sm" />
-            </button>
-          </div>
-        ))}
-      </div>
-    </ToastContext.Provider>
+      <BaseToast.Portal>
+        <BaseToast.Viewport className="toasts">
+          <ToastList />
+        </BaseToast.Viewport>
+      </BaseToast.Portal>
+    </BaseToast.Provider>
   )
+}
+
+function ToastList() {
+  const { toasts } = BaseToast.useToastManager<ToastData>()
+  return toasts.map((t) => (
+    <BaseToast.Root key={t.id} toast={t} className="toast">
+      <span className={`ev-ic t-${t.data?.tone ?? 'in'}`} style={{ width: 32, height: 32 }}>
+        <Icon name={t.data?.icon ?? 'check'} size="sm" />
+      </span>
+      <span className="flex flex-1 flex-col gap-0.5">
+        <BaseToast.Title className="toast-title" />
+        <BaseToast.Description className="toast-desc" />
+      </span>
+      <BaseToast.Close className="icon-btn" aria-label="Fechar aviso" style={{ width: 28, height: 28 }}>
+        <Icon name="x" size="sm" />
+      </BaseToast.Close>
+    </BaseToast.Root>
+  ))
 }

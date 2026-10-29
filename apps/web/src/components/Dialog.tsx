@@ -1,4 +1,6 @@
-import { type ReactNode, useEffect, useRef } from 'react'
+import { AlertDialog } from '@base-ui/react/alert-dialog'
+import { Dialog as BaseDialog } from '@base-ui/react/dialog'
+import { type ReactNode, useRef } from 'react'
 import { Icon, type IconName } from '#/components/Icon'
 import { Spinner } from '#/components/states'
 
@@ -11,6 +13,7 @@ type Props = {
   icon?: { name: IconName; tone: string }
   /** 'sheet' slides in from the right (edit forms) */
   variant?: 'dialog' | 'sheet'
+  /** Destructive confirmation: Base UI AlertDialog (no close on outside click) */
   alert?: boolean
   children: ReactNode
   footer: ReactNode
@@ -18,7 +21,7 @@ type Props = {
   onSubmit?: () => void
 }
 
-/** Modal on the native <dialog>: focus is trapped, Esc and "Fechar" close it, Enter submits the form. */
+/** Modal on Base UI Dialog: focus is trapped and starts on the first field, Esc and "Fechar" close it, Enter submits. */
 export function Dialog({
   open,
   onClose,
@@ -31,50 +34,47 @@ export function Dialog({
   footer,
   onSubmit,
 }: Props) {
-  const ref = useRef<HTMLDialogElement>(null)
-
-  useEffect(() => {
-    const dialog = ref.current
-    if (open && !dialog?.open) dialog?.showModal()
-    if (!open && dialog?.open) dialog.close()
-  }, [open])
+  const Parts = alert ? AlertDialog : BaseDialog
+  const popup = useRef<HTMLDivElement>(null)
 
   return (
-    <dialog ref={ref} className={variant} onClose={onClose} role={alert ? 'alertdialog' : undefined}>
-      <form
-        className="flex h-full flex-col"
-        onSubmit={(e) => {
-          e.preventDefault()
-          onSubmit?.()
-        }}
-      >
-        <div
-          className="dialog-head"
-          style={variant === 'sheet' ? { padding: '22px 24px', borderBottom: '1px solid var(--border)' } : undefined}
+    <Parts.Root open={open} onOpenChange={(next) => !next && onClose()}>
+      <Parts.Portal>
+        <Parts.Backdrop className="backdrop" />
+        <Parts.Popup
+          ref={popup}
+          className={`popup ${variant}`}
+          initialFocus={() => popup.current?.querySelector<HTMLElement>('input:not([disabled])') ?? true}
         >
-          <div className="flex items-start gap-3">
-            {icon && (
-              <span className={`ev-ic ${icon.tone}`}>
-                <Icon name={icon.name} />
-              </span>
-            )}
-            <div>
-              <h2 className="dialog-title">{title}</h2>
-              {description && <p className="dialog-desc">{description}</p>}
+          <form
+            className="flex h-full flex-col"
+            onSubmit={(e) => {
+              e.preventDefault()
+              onSubmit?.()
+            }}
+          >
+            <div className="dialog-head">
+              <div className="flex items-start gap-3">
+                {icon && (
+                  <span className={`ev-ic ${icon.tone}`}>
+                    <Icon name={icon.name} />
+                  </span>
+                )}
+                <div>
+                  <Parts.Title className="dialog-title">{title}</Parts.Title>
+                  {description && <Parts.Description className="dialog-desc">{description}</Parts.Description>}
+                </div>
+              </div>
+              <Parts.Close className="icon-btn" aria-label="Fechar">
+                <Icon name="x" />
+              </Parts.Close>
             </div>
-          </div>
-          <button className="icon-btn" type="button" aria-label="Fechar" onClick={onClose}>
-            <Icon name="x" />
-          </button>
-        </div>
-        <div className="dialog-body" style={variant === 'sheet' ? { flex: 1 } : undefined}>
-          {children}
-        </div>
-        <div className="dialog-foot" style={variant === 'sheet' ? { borderRadius: 0 } : undefined}>
-          {footer}
-        </div>
-      </form>
-    </dialog>
+            <div className="dialog-body">{children}</div>
+            <div className="dialog-foot">{footer}</div>
+          </form>
+        </Parts.Popup>
+      </Parts.Portal>
+    </Parts.Root>
   )
 }
 

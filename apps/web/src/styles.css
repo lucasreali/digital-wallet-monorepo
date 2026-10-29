@@ -220,6 +220,14 @@
   border-color: var(--danger);
 }
 .btn:focus-visible,
+.icon-btn:focus-visible,
+.chip:focus-visible,
+.seg-b:focus-visible,
+.nav-a:focus-visible,
+.bnav-a:focus-visible,
+.link:focus-visible,
+.th-sort:focus-visible,
+.who-name:focus-visible,
 .is-focus-ring {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
@@ -250,7 +258,8 @@
   background: var(--danger-soft);
   color: var(--danger);
 }
-.icon-btn[disabled] {
+.icon-btn[disabled],
+.icon-btn[data-disabled] {
   opacity: 0.4;
   cursor: not-allowed;
 }
@@ -300,11 +309,13 @@
   border-color: var(--focus);
   box-shadow: 0 0 0 3px var(--info-soft);
 }
-.input.is-error {
+.input.is-error,
+.input[data-invalid] {
   border-color: var(--danger);
   box-shadow: 0 0 0 3px var(--danger-soft);
 }
-.input[disabled] {
+.input[disabled],
+.input[data-disabled] {
   background: var(--surface-2);
   color: var(--muted);
 }
@@ -374,7 +385,8 @@
   border-radius: 8px;
   min-height: 44px;
 }
-.option.on {
+.option.on,
+.option[data-selected] {
   background: var(--primary-soft);
 }
 
@@ -484,7 +496,8 @@
   cursor: pointer;
   white-space: nowrap;
 }
-.chip.on {
+.chip.on,
+.chip[data-pressed] {
   background: var(--primary-soft);
   border-color: var(--primary);
   color: var(--primary-text);
@@ -924,7 +937,8 @@
   font: 700 12.5px var(--font-ui);
   cursor: pointer;
 }
-.seg-b.on {
+.seg-b.on,
+.seg-b[data-pressed] {
   background: var(--surface);
   color: var(--text);
   box-shadow: var(--shadow-sm);
@@ -1057,31 +1071,119 @@ body {
 .theme-m {
   display: none;
 }
-dialog.dialog,
-dialog.sheet {
-  padding: 0;
-  color: var(--text);
+/* Base UI dialog parts (portaled to <body>) */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: var(--overlay);
+  transition: opacity 150ms;
 }
-/* .dialog/.sheet set display: flex, which would otherwise show a closed native <dialog> */
-dialog:not([open]) {
+.popup {
+  position: fixed;
+  z-index: 61;
+  color: var(--text);
+  overflow-y: auto;
+  transition:
+    opacity 150ms,
+    transform 200ms ease-out;
+}
+.popup.dialog {
+  top: 50%;
+  left: 50%;
+  width: min(440px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  transform: translate(-50%, -50%);
+}
+.popup.sheet {
+  top: 0;
+  right: 0;
+  height: 100dvh;
+}
+.sheet .dialog-head {
+  padding: 22px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.sheet .dialog-body {
+  flex: 1;
+}
+.sheet .dialog-foot {
+  border-radius: 0;
+}
+.backdrop[data-starting-style],
+.backdrop[data-ending-style],
+.popup[data-starting-style],
+.popup[data-ending-style] {
+  opacity: 0;
+}
+.popup.dialog[data-starting-style],
+.popup.dialog[data-ending-style] {
+  transform: translate(-50%, -48%) scale(0.98);
+}
+.popup.sheet[data-starting-style],
+.popup.sheet[data-ending-style] {
+  transform: translateX(24px);
+}
+/* inline combobox list inside "Abrir carteira" */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 264px;
+  overflow-y: auto;
+}
+.option {
+  cursor: pointer;
+}
+.option[data-highlighted] {
+  background: var(--surface-2);
+}
+.option[data-selected][data-highlighted] {
+  background: var(--primary-soft);
+}
+.empty-opt {
+  padding: 8px 10px;
+  font-size: 13px;
+}
+.empty-opt:empty {
   display: none;
 }
-dialog.sheet {
-  margin: 0 0 0 auto;
-  height: 100vh;
-  max-height: 100vh;
-  border-top: 0;
-  border-bottom: 0;
-  border-right: 0;
+.tip {
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--text);
+  color: var(--surface);
+  font: 600 12px var(--font-ui);
+  box-shadow: var(--shadow-md);
+  transition: opacity 120ms;
 }
-dialog::backdrop {
-  background: rgba(14, 22, 21, 0.46);
+.tip[data-starting-style],
+.tip[data-ending-style] {
+  opacity: 0;
+}
+.toast {
+  transition:
+    opacity 150ms,
+    transform 200ms ease-out;
+}
+.toast[data-starting-style],
+.toast[data-ending-style] {
+  opacity: 0;
+  transform: translateY(8px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .popup,
+  .tip,
+  .toast {
+    transition: none;
+  }
 }
 .toasts {
   position: fixed;
   right: 24px;
   bottom: 24px;
-  z-index: 50;
+  z-index: 70;
   display: flex;
   flex-direction: column;
   gap: 10px;

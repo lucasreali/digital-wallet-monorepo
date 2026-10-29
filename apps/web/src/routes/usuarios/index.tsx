@@ -4,6 +4,7 @@ import { columnHelper, DataTable } from '#/components/DataTable'
 import { Icon } from '#/components/Icon'
 import { PageHeader } from '#/components/layout/PageHeader'
 import { EmptyState, ErrorState, ListSkeleton } from '#/components/states'
+import { Tip } from '#/components/Tip'
 import { DeleteUserDialog, EditUserDialog, NewUserButton } from '#/features/users'
 import { useListUsers, useListWallets } from '#/gen/hooks'
 import { apiErrorMessage } from '#/lib/api-error'
@@ -64,30 +65,36 @@ function Users() {
       meta: { align: 'right' },
       cell: ({ row }) => (
         <div className="actions">
-          <Link
-            className="icon-btn"
-            to="/usuarios/$userId"
-            params={{ userId: row.original.id }}
-            aria-label={`Ver ${row.original.name}`}
-          >
-            <Icon name="eye" />
-          </Link>
-          <button
-            className="icon-btn"
-            type="button"
-            aria-label={`Editar ${row.original.name}`}
-            onClick={() => setEditing(row.original)}
-          >
-            <Icon name="pencil" />
-          </button>
-          <button
-            className="icon-btn danger"
-            type="button"
-            aria-label={`Excluir ${row.original.name}`}
-            onClick={() => setDeleting(row.original)}
-          >
-            <Icon name="trash" />
-          </button>
+          <Tip label="Ver detalhes">
+            <Link
+              className="icon-btn"
+              to="/usuarios/$userId"
+              params={{ userId: row.original.id }}
+              aria-label={`Ver ${row.original.name}`}
+            >
+              <Icon name="eye" />
+            </Link>
+          </Tip>
+          <Tip label="Editar">
+            <button
+              className="icon-btn"
+              type="button"
+              aria-label={`Editar ${row.original.name}`}
+              onClick={() => setEditing(row.original)}
+            >
+              <Icon name="pencil" />
+            </button>
+          </Tip>
+          <Tip label="Excluir">
+            <button
+              className="icon-btn danger"
+              type="button"
+              aria-label={`Excluir ${row.original.name}`}
+              onClick={() => setDeleting(row.original)}
+            >
+              <Icon name="trash" />
+            </button>
+          </Tip>
         </div>
       ),
     }),

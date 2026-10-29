@@ -1,6 +1,6 @@
 # web
 
-Frontend da Carteira Digital: uma SPA em **React** (TanStack Start/Router, Query, Form e Table) que conversa **apenas com o BFF**.
+Frontend da Carteira Digital: uma SPA em **React** (TanStack Start/Router, Query, Form e Table; componentes acessíveis do **Base UI**) que conversa **apenas com o BFF**.
 
 ## O que faz
 
