@@ -13,6 +13,7 @@ import { ConflictError } from '../domain/errors';
 import type { NewTransaction, Transaction } from '../domain/transaction.entity';
 import type { Wallet } from '../domain/wallet.entity';
 import { WalletRepository } from '../domain/wallet.repository';
+import { isSqlGuid } from './sql-guid';
 
 @Entity('wallets')
 export class WalletRow {
@@ -54,6 +55,8 @@ export class SqlWalletRepository extends WalletRepository {
   }
 
   async findById(id: string): Promise<Wallet | null> {
+    // A malformed id is an unknown wallet (404), not a conversion error from SQL Server (500)
+    if (!isSqlGuid(id)) return null;
     const row = await this.wallets.findOneBy({ id });
     return row && toWallet(row);
   }

@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import type { Wallet } from '../../domain/wallet.entity';
 import { GetWallet } from './get-wallet.use-case';
 
@@ -8,7 +8,7 @@ export class GetWalletController {
 
   /** Returns one wallet; 404 if it does not exist */
   @Get(':id')
-  get(@Param('id', ParseUUIDPipe) id: string): Promise<Wallet> {
+  get(@Param('id') id: string): Promise<Wallet> {
     return this.getWallet.execute({ id });
   }
 }

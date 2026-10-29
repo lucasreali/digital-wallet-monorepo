@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import type { Transaction } from '../../domain/transaction.entity';
 import { ListTransactions } from './list-transactions.use-case';
 
@@ -8,7 +8,7 @@ export class ListTransactionsController {
 
   /** Lists a wallet's deposits and withdrawals, newest first; 404 unknown wallet */
   @Get(':id/transactions')
-  list(@Param('id', ParseUUIDPipe) id: string): Promise<Transaction[]> {
+  list(@Param('id') id: string): Promise<Transaction[]> {
     return this.listTransactions.execute({ walletId: id });
   }
 }
