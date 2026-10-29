@@ -8,18 +8,19 @@ Projeto PJBL da disciplina **Arquitetura de Soluções com Cloud** (PUCPR), Entr
 
 | Item | Link |
 |---|---|
-| Frontend (Azure Static Web Apps) | _a preencher_ |
+| Frontend (Azure Container Apps) | https://web.wonderfuldune-fe1dc2f4.canadacentral.azurecontainerapps.io |
 | API Gateway (AWS) | https://i12uxusdx6.execute-api.us-east-1.amazonaws.com |
 | Swagger — BFF (via API Gateway) | https://i12uxusdx6.execute-api.us-east-1.amazonaws.com/docs |
 | Swagger — svc-identidade (MongoDB) | https://svc-identidade.wonderfuldune-fe1dc2f4.canadacentral.azurecontainerapps.io/docs |
 | Swagger — svc-carteira (Azure SQL) | https://svc-carteira.wonderfuldune-fe1dc2f4.canadacentral.azurecontainerapps.io/docs |
+| Azure Function (score) | https://func-pjbl-cd-fpfbg6c3axgwh5b2.canadacentral-01.azurewebsites.net/api/insights |
 | Swagger — Eventos (AsyncAPI) | _a preencher_ ([fonte](docs/events/asyncapi.yaml)) |
 | Docker Hub | _a preencher_ |
 | GitHub | https://github.com/lucasreali/digital-wallet-monorepo |
 | Vídeo (YouTube, não listado) | _a preencher_ |
 | Documentação arc42 (PDF) | [docs/Carteira-Digital-Arquitetura-arc42-1.pdf](docs/Carteira-Digital-Arquitetura-arc42-1.pdf) |
 
-A apresentação em vídeo usa só estas URLs públicas na nuvem, nunca `localhost`. O BFF e os microsserviços rodam no Azure Container Apps; o API Gateway, na AWS.
+A apresentação em vídeo usa só estas URLs públicas na nuvem, nunca `localhost`. O frontend, o BFF e os microsserviços rodam no Azure Container Apps, a Function no Azure Functions e o API Gateway na AWS. O frontend chama só o API Gateway.
 
 ## Arquitetura
 
