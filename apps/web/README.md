@@ -8,7 +8,6 @@ Frontend da Carteira Digital: uma SPA em **React** (TanStack Start/Router, Query
 - **Usuários**: listar, criar, editar e excluir; detalhe com ou sem carteira.
 - **Carteiras**: listar e abrir; detalhe com saldo, depósito, saque, extrato e encerramento.
 - **Atividade**: feed dos eventos do sistema.
-- **Sobre o sistema**: os componentes da arquitetura.
 
 Layout com menu lateral (desktop) e barra inferior (celular), tema claro e escuro, seguindo `docs/prototype.html`.
 

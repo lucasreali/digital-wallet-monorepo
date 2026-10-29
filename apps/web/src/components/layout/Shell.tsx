@@ -17,7 +17,6 @@ const nav: { to: string; label: string; icon: IconName }[] = [
   { to: '/usuarios', label: 'Usuários', icon: 'users' },
   { to: '/carteiras', label: 'Carteiras', icon: 'wallet' },
   { to: '/atividade', label: 'Atividade', icon: 'activity' },
-  { to: '/sobre', label: 'Sobre', icon: 'info' },
 ]
 
 /** App frame: sidebar on desktop, bottom nav on mobile, light/dark theme on <html>. */

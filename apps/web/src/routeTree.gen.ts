@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AtividadeRouteImport } from './routes/atividade'
-import { Route as SobreRouteImport } from './routes/sobre'
 import { Route as CarteirasIndexRouteImport } from './routes/carteiras/index'
 import { Route as CarteirasWalletIdRouteImport } from './routes/carteiras/$walletId'
 import { Route as UsuariosIndexRouteImport } from './routes/usuarios/index'
@@ -25,11 +24,6 @@ const IndexRoute = IndexRouteImport.update({
 const AtividadeRoute = AtividadeRouteImport.update({
   id: '/atividade',
   path: '/atividade',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SobreRoute = SobreRouteImport.update({
-  id: '/sobre',
-  path: '/sobre',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CarteirasIndexRoute = CarteirasIndexRouteImport.update({
@@ -56,7 +50,6 @@ const UsuariosUserIdRoute = UsuariosUserIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/atividade': typeof AtividadeRoute
-  '/sobre': typeof SobreRoute
   '/carteiras/$walletId': typeof CarteirasWalletIdRoute
   '/usuarios/$userId': typeof UsuariosUserIdRoute
   '/carteiras/': typeof CarteirasIndexRoute
@@ -65,7 +58,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/atividade': typeof AtividadeRoute
-  '/sobre': typeof SobreRoute
   '/carteiras/$walletId': typeof CarteirasWalletIdRoute
   '/usuarios/$userId': typeof UsuariosUserIdRoute
   '/carteiras': typeof CarteirasIndexRoute
@@ -75,7 +67,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/atividade': typeof AtividadeRoute
-  '/sobre': typeof SobreRoute
   '/carteiras/$walletId': typeof CarteirasWalletIdRoute
   '/usuarios/$userId': typeof UsuariosUserIdRoute
   '/carteiras/': typeof CarteirasIndexRoute
@@ -86,7 +77,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/atividade'
-    | '/sobre'
     | '/carteiras/$walletId'
     | '/usuarios/$userId'
     | '/carteiras/'
@@ -95,7 +85,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/atividade'
-    | '/sobre'
     | '/carteiras/$walletId'
     | '/usuarios/$userId'
     | '/carteiras'
@@ -104,7 +93,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/atividade'
-    | '/sobre'
     | '/carteiras/$walletId'
     | '/usuarios/$userId'
     | '/carteiras/'
@@ -114,7 +102,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AtividadeRoute: typeof AtividadeRoute
-  SobreRoute: typeof SobreRoute
   CarteirasWalletIdRoute: typeof CarteirasWalletIdRoute
   UsuariosUserIdRoute: typeof UsuariosUserIdRoute
   CarteirasIndexRoute: typeof CarteirasIndexRoute
@@ -135,13 +122,6 @@ declare module '@tanstack/react-router' {
       path: '/atividade'
       fullPath: '/atividade'
       preLoaderRoute: typeof AtividadeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sobre': {
-      id: '/sobre'
-      path: '/sobre'
-      fullPath: '/sobre'
-      preLoaderRoute: typeof SobreRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/carteiras/': {
@@ -178,7 +158,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AtividadeRoute: AtividadeRoute,
-  SobreRoute: SobreRoute,
   CarteirasWalletIdRoute: CarteirasWalletIdRoute,
   UsuariosUserIdRoute: UsuariosUserIdRoute,
   CarteirasIndexRoute: CarteirasIndexRoute,
