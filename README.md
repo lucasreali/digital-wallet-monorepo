@@ -9,15 +9,17 @@ Projeto PJBL da disciplina **Arquitetura de Soluções com Cloud** (PUCPR), Entr
 | Item | Link |
 |---|---|
 | Frontend (Azure Static Web Apps) | _a preencher_ |
-| API Gateway (AWS) | _a preencher_ |
-| Swagger — BFF | _a preencher_ |
-| Swagger — svc-identidade (MongoDB) | _a preencher_ |
-| Swagger — svc-carteira (Azure SQL) | _a preencher_ |
+| API Gateway (AWS) | https://i12uxusdx6.execute-api.us-east-1.amazonaws.com |
+| Swagger — BFF (via API Gateway) | https://i12uxusdx6.execute-api.us-east-1.amazonaws.com/docs |
+| Swagger — svc-identidade (MongoDB) | https://svc-identidade.wonderfuldune-fe1dc2f4.canadacentral.azurecontainerapps.io/docs |
+| Swagger — svc-carteira (Azure SQL) | https://svc-carteira.wonderfuldune-fe1dc2f4.canadacentral.azurecontainerapps.io/docs |
 | Swagger — Eventos (AsyncAPI) | _a preencher_ ([fonte](docs/events/asyncapi.yaml)) |
 | Docker Hub | _a preencher_ |
-| GitHub | _a preencher_ |
+| GitHub | https://github.com/lucasreali/digital-wallet-monorepo |
 | Vídeo (YouTube, não listado) | _a preencher_ |
 | Documentação arc42 (PDF) | [docs/Carteira-Digital-Arquitetura-arc42-1.pdf](docs/Carteira-Digital-Arquitetura-arc42-1.pdf) |
+
+A apresentação em vídeo usa só estas URLs públicas na nuvem, nunca `localhost`. O BFF e os microsserviços rodam no Azure Container Apps; o API Gateway, na AWS.
 
 ## Arquitetura
 
@@ -40,7 +42,7 @@ flowchart LR
 
 | # | Componente | Pasta | Tecnologia | Responsabilidade |
 |---|---|---|---|---|
-| 1 | Microfrontend | [`apps/web`](apps/web) | React, TanStack Start/Router/Query/Form/Table, Kubb | Interface; consome **apenas** o BFF |
+| 1 | Microfrontend | [`apps/web`](apps/web) | React, TanStack Start/Router/Query/Form/Table, Base UI, Kubb | Interface; consome **apenas** o BFF |
 | 2 | BFF | [`apps/bff`](apps/bff) | NestJS + Fastify | Proxy do CRUD e `GET /aggregated-data` (Mongo + SQL + Function numa resposta só) |
 | 3 | Microsserviço 1 | [`services/svc-identidade`](services/svc-identidade) | NestJS + Mongoose, MongoDB Atlas | Usuários: CRUD + Swagger |
 | 4 | Microsserviço 2 | [`services/svc-carteira`](services/svc-carteira) | NestJS + TypeORM, Azure SQL | Carteiras, depósitos, saques, extrato: CRUD + regras + Swagger |
@@ -95,11 +97,12 @@ Ou com os bancos no Docker e as apps no host:
 
 ```bash
 docker compose up mongo-identidade sql-carteira sql-carteira-init azurite
-export AZURE_STORAGE_CONNECTION_STRING=UseDevelopmentStorage=true
+export AZURE_STORAGE_CONNECTION_STRING=UseDevelopmentStorage=true   # Table Storage da Function (Azurite)
+export SERVICEBUS_CONNECTION_STRING='<connection string do Service Bus>'   # sem ela os eventos não são publicados
 PORT=3001 pnpm --filter svc-identidade dev
 PORT=3002 DB_PASSWORD='Carteira@Local123' DB_TRUST_CERT=true pnpm --filter svc-carteira dev
 pnpm --filter bff dev
-pnpm --filter fn-notificacoes build && (cd services/fn-notificacoes && func start)
+pnpm --filter fn-notificacoes build && (cd services/fn-notificacoes && func start)   # ServiceBusConnection em local.settings.json
 pnpm --filter web dev
 ```
 
@@ -138,4 +141,7 @@ Todas as configurações (URLs, conexões, senhas) vêm de variáveis de ambient
 
 | Nome | RA / Matrícula |
 |---|---|
-| _a preencher_ | _a preencher_ |
+| Lucas Reali | 40092691 |
+| Guilherme Falde | 40101681 |
+| Thiago Akimoto | 40090610 |
+| Gabriel Conti | 40095589 |
