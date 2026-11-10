@@ -9,12 +9,12 @@ Projeto PJBL da disciplina **Arquitetura de Soluções com Cloud** (PUCPR), Entr
 | Item | Link |
 |---|---|
 | Frontend (Azure Container Apps) | https://web.wonderfuldune-fe1dc2f4.canadacentral.azurecontainerapps.io |
-| API Gateway (AWS) | https://i12uxusdx6.execute-api.us-east-1.amazonaws.com |
+| API Gateway (AWS) | https://i12uxusdx6.execute-api.us-east-1.amazonaws.com/aggregated-data (a raiz não tem rota; o gateway repassa qualquer caminho ao BFF) |
 | Swagger — BFF (via API Gateway) | https://i12uxusdx6.execute-api.us-east-1.amazonaws.com/docs |
 | Swagger — svc-identidade (MongoDB) | https://svc-identidade.wonderfuldune-fe1dc2f4.canadacentral.azurecontainerapps.io/docs |
 | Swagger — svc-carteira (Azure SQL) | https://svc-carteira.wonderfuldune-fe1dc2f4.canadacentral.azurecontainerapps.io/docs |
 | Azure Function (score) | https://func-pjbl-cd-fpfbg6c3axgwh5b2.canadacentral-01.azurewebsites.net/api/insights |
-| Swagger — Eventos (AsyncAPI) | https://github.com/lucasreali/digital-wallet-monorepo/blob/main/docs/events/asyncapi.yaml (visualizar colando em https://studio.asyncapi.com) |
+| Swagger — Eventos (AsyncAPI) | [Documentação renderizada no AsyncAPI Studio](https://studio.asyncapi.com/?url=https://raw.githubusercontent.com/lucasreali/digital-wallet-monorepo/main/docs/events/asyncapi.yaml) · arquivo: https://github.com/lucasreali/digital-wallet-monorepo/blob/main/docs/events/asyncapi.yaml |
 | Docker Hub | https://hub.docker.com/u/f4d3l |
 | GitHub | https://github.com/lucasreali/digital-wallet-monorepo |
 | Vídeo (YouTube, não listado) | _a preencher_ |
