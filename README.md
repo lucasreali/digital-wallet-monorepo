@@ -18,7 +18,7 @@ Projeto PJBL da disciplina **Arquitetura de Soluções com Cloud** (PUCPR), Entr
 | Docker Hub | https://hub.docker.com/u/f4d3l |
 | GitHub | https://github.com/lucasreali/digital-wallet-monorepo |
 | Vídeo (YouTube, não listado) | _a preencher_ |
-| Documentação arc42 (PDF) | [docs/Carteira-Digital-Arquitetura-arc42-1.pdf](docs/Carteira-Digital-Arquitetura-arc42-1.pdf) |
+| Documentação arc42 (PDF) | [docs/Carteira-Digital-Arquitetura-arc42-Entrega3.pdf](docs/Carteira-Digital-Arquitetura-arc42-Entrega3.pdf) |
 
 A apresentação em vídeo usa só estas URLs públicas na nuvem, nunca `localhost`. O frontend, o BFF e os microsserviços rodam no Azure Container Apps, a Function no Azure Functions e o API Gateway na AWS. O frontend chama só o API Gateway.
 
@@ -36,7 +36,7 @@ flowchart LR
   C --> S[(Azure SQL)]
   I -- UserCreated --> Q[[Service Bus<br/>wallet-events]]
   C -- WalletOpened / Deposit /<br/>Withdrawal / WalletClosed --> Q
-  Q --> FT[fn-notificacoes<br/>Queue Trigger]
+  Q --> FT[fn-notificacoes<br/>Service Bus Trigger]
   FT --> T[(Table Storage)]
   F --> T
 ```
@@ -47,7 +47,7 @@ flowchart LR
 | 2 | BFF | [`apps/bff`](apps/bff) | NestJS + Fastify | Proxy do CRUD e `GET /aggregated-data` (Mongo + SQL + Function numa resposta só) |
 | 3 | Microsserviço 1 | [`services/svc-identidade`](services/svc-identidade) | NestJS + Mongoose, MongoDB Atlas | Usuários: CRUD + Swagger |
 | 4 | Microsserviço 2 | [`services/svc-carteira`](services/svc-carteira) | NestJS + TypeORM, Azure SQL | Carteiras, depósitos, saques, extrato: CRUD + regras + Swagger |
-| 5 | Azure Function | [`services/fn-notificacoes`](services/fn-notificacoes) | Azure Functions v4 (Node) | Queue Trigger que consome os eventos; HTTP para score (`/api/insights`) e feed (`/api/activity`) |
+| 5 | Azure Function | [`services/fn-notificacoes`](services/fn-notificacoes) | Azure Functions v4 (Node) | Gatilho de Service Bus que consome os eventos; HTTP para score (`/api/insights`) e feed (`/api/activity`) |
 | 6 | API Gateway | — | AWS API Gateway | Entrada única, roteamento e segurança na frente do BFF |
 | 7 | Mensageria | — | Azure Service Bus | Fila `wallet-events` com os eventos de domínio |
 
